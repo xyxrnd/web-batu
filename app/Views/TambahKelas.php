@@ -1,21 +1,21 @@
 <?= $this->extend('layouts/base') ?>
-<?= $this->section('title') ?>Tambah Kriteria<?= $this->endSection() ?>
+<?= $this->section('title') ?>Tambah Kelas<?= $this->endSection() ?>
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
 
     <!-- Page Heading -->
     <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Tambah Data Kriteria</h1>
+        <h1 class="h3 mb-0 text-gray-800">Tambah Data Kelas</h1>
     </div>
 
     <div class="mb-3">
         <div class="row">
             <div class="col-md-6">
-                <h1 class="h3 d-inline align-middle">Data Kriteria</h1>
+                <h1 class="h3 d-inline align-middle">Data Kelas</h1>
             </div>
             <div class="col-md-6 text-right">
-                <a href="/kriteria" class="btn btn-primary">
+                <a href="/kelas" class="btn btn-primary">
                     <i class="fa fa-arrow-left fa-sm"></i> Kembali
                 </a>
             </div>
@@ -26,12 +26,12 @@
         <div class="col-12">
             <div class="card">
 
-                <form action="/kriteria/simpan" method="post">
+                <form action="/kelas/simpan" method="post">
                     <?= csrf_field() ?>
 
                     <div class="card-body">
 
-                        <!-- Error Validasi -->
+                        <!-- Error validasi -->
                         <?php if (session()->getFlashdata('errors')): ?>
                             <div class="alert alert-danger">
                                 <i class="fa fa-exclamation-circle"></i>
@@ -44,23 +44,29 @@
                             </div>
                         <?php endif; ?>
 
+                        <!-- Error umum -->
+                        <?php if (session()->getFlashdata('error')): ?>
+                            <div class="alert alert-danger">
+                                <i class="fa fa-exclamation-circle"></i>
+                                <?= esc(session()->getFlashdata('error')) ?>
+                            </div>
+                        <?php endif; ?>
+
                         <div class="form-group">
-                            <label for="kriteria">Nama Kriteria</label>
-                            <input
-                                type="text"
+                            <label for="kelas">Nama Kelas</label>
+                            <input type="text"
                                 class="form-control"
-                                id="kriteria"
-                                name="kriteria"
-                                value="<?= old('kriteria') ?>"
-                                placeholder="Masukkan nama kriteria"
-                                required>
+                                id="kelas"
+                                name="kelas"
+                                placeholder="Masukkan nama kelas"
+                                value="<?= old('kelas') ?>">
                         </div>
 
                     </div>
 
                     <div class="card-footer text-right">
                         <button type="button" class="btn btn-primary" id="btnSubmit">
-                            <i class="fa fa-save mr-2"></i>Simpan
+                            <i class="fa fa-save mr-2"></i> Simpan
                         </button>
                     </div>
 

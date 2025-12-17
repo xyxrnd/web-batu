@@ -32,6 +32,11 @@
             <span>Dashboard</span></a>
     </li>
     <li class="nav-item">
+        <a class="nav-link" href="/kelas">
+            <i class="fas fa-user"></i>
+            <span>Kelola Kelas</span></a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="/batu">
             <i class="fas fa-user"></i>
             <span>Kelola Batu</span></a>
@@ -47,7 +52,7 @@
             <span>Kelola Penyewa</span></a>
     </li> -->
     <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('admin/transaksi') ?>">
+        <a class="nav-link" href="/user">
             <i class="fas fa-receipt"></i>
             <span>Kelola User</span></a>
     </li>
