@@ -122,17 +122,21 @@ class KriteriaControllers extends BaseController
             return redirect()->back()->with('error', 'Minimal 2 kriteria');
         }
 
-        // 1. Matriks awal
+        // 1. Bangun matriks AHP dengan benar
         $matrix = [];
 
+        // a. Inisialisasi diagonal = 1
         foreach ($kriteria as $i) {
             foreach ($kriteria as $j) {
-                if ($i == $j) {
-                    $matrix[$i][$j] = 1;
-                } elseif (isset($pair[$i][$j])) {
-                    $matrix[$i][$j] = $pair[$i][$j];
-                    $matrix[$j][$i] = 1 / $pair[$i][$j];
-                }
+                $matrix[$i][$j] = 1;
+            }
+        }
+
+        // b. Isi perbandingan dari input user
+        foreach ($pair as $i => $row) {
+            foreach ($row as $j => $value) {
+                $matrix[$i][$j] = $value;
+                $matrix[$j][$i] = 1 / $value;
             }
         }
 

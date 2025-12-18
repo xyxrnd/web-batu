@@ -3,6 +3,11 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger">
+            <?= session()->getFlashdata('error') ?>
+        </div>
+    <?php endif; ?>
 
     <!-- Heading -->
     <div class="d-flex align-items-center justify-content-between mb-4">
