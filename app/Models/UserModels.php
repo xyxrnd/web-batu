@@ -14,14 +14,15 @@ class UserModels extends Model
     protected $allowedFields    = [
         'nama',
         'no_hp',
-        'password'
+        'password',
+        'role'
     ];
 
     protected $useTimestamps    = false;
 
-    // Cari user berdasarkan no_hp
-    public function getUserByNoHp($no_hp)
+    // Login pakai NAMA
+    public function getUserByNama($nama)
     {
-        return $this->where('no_hp', $no_hp)->first();
+        return $this->where('nama', $nama)->first();
     }
 }

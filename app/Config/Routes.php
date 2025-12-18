@@ -5,32 +5,85 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::PanitiaDashboard');
-$routes->get('/batu', 'BatuControllers::DaftarBatu');
-$routes->get('/kriteria', 'KriteriaControllers::DaftarKriteria');
-$routes->get('/kelas', 'KelasControllers::DaftarKelas');
+
+/*
+|--------------------------------------------------------------------------
+| AUTH
+|--------------------------------------------------------------------------
+*/
+$routes->get('/login', 'AuthControllers::Login');
+$routes->post('/login', 'AuthControllers::ProsesLogin');
+$routes->get('/logout', 'AuthControllers::Logout');
 
 
-// Menu Kelola Batu
-$routes->get('/batu/tambah', 'BatuControllers::TambahBatu');
-$routes->post('/batu/simpan', 'BatuControllers::SimpanBatu');
-$routes->get('/batu/edit/(:num)', 'BatuControllers::EditBatu/$1');
-$routes->post('/batu/update/(:num)', 'BatuControllers::UpdateBatu/$1');
-$routes->get('/batu/hapus/(:num)', 'BatuControllers::HapusBatu/$1');
-
-// Menu Kelola Kriteria
-$routes->get('/kriteria/tambah', 'KriteriaControllers::TambahKriteria');
-$routes->post('/kriteria/simpan', 'KriteriaControllers::SimpanKriteria');
-$routes->get('/kriteria/edit/(:num)', 'KriteriaControllers::EditKriteria/$1');
-$routes->post('/kriteria/update/(:num)', 'KriteriaControllers::UpdateKriteria/$1');
-$routes->get('/kriteria/hapus/(:num)', 'KriteriaControllers::HapusKriteria/$1');
-$routes->get('kriteria/bobot', 'KriteriaControllers::bobotAHP');
-$routes->post('kriteria/simpan-bobot', 'KriteriaControllers::simpanBobot');
+/*
+|--------------------------------------------------------------------------
+| DASHBOARD (WAJIB LOGIN)
+|--------------------------------------------------------------------------
+*/
+$routes->get('/', 'Home::PanitiaDashboard', ['filter' => 'auth']);
 
 
-// Menu Kelola Kelas
-$routes->get('/kelas/tambah', 'KelasControllers::create');
-$routes->post('/kelas/simpan', 'KelasControllers::store');
-$routes->get('/kelas/edit/(:num)', 'KelasControllers::edit/$1');
-$routes->post('/kelas/update/(:num)', 'KelasControllers::update/$1');
-$routes->get('/kelas/hapus/(:num)', 'KelasControllers::delete/$1');
+
+/*
+|--------------------------------------------------------------------------
+| BATU (CRUD) - AUTH
+|--------------------------------------------------------------------------
+*/
+$routes->group('batu', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'BatuControllers::DaftarBatu');
+    $routes->get('tambah', 'BatuControllers::TambahBatu');
+    $routes->post('simpan', 'BatuControllers::SimpanBatu');
+    $routes->get('edit/(:num)', 'BatuControllers::EditBatu/$1');
+    $routes->post('update/(:num)', 'BatuControllers::UpdateBatu/$1');
+    $routes->post('hapus/(:num)', 'BatuControllers::HapusBatu/$1');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| KRITERIA (CRUD + BOBOT AHP) - AUTH
+|--------------------------------------------------------------------------
+*/
+$routes->group('kriteria', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'KriteriaControllers::DaftarKriteria');
+    $routes->get('tambah', 'KriteriaControllers::TambahKriteria');
+    $routes->post('simpan', 'KriteriaControllers::SimpanKriteria');
+    $routes->get('edit/(:num)', 'KriteriaControllers::EditKriteria/$1');
+    $routes->post('update/(:num)', 'KriteriaControllers::UpdateKriteria/$1');
+    $routes->post('hapus/(:num)', 'KriteriaControllers::HapusKriteria/$1');
+
+    // Bobot AHP
+    $routes->get('bobot', 'KriteriaControllers::bobotAHP');
+    $routes->post('simpan-bobot', 'KriteriaControllers::simpanBobot');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| KELAS (CRUD) - AUTH
+|--------------------------------------------------------------------------
+*/
+$routes->group('kelas', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'KelasControllers::DaftarKelas');
+    $routes->get('tambah', 'KelasControllers::create');
+    $routes->post('simpan', 'KelasControllers::store');
+    $routes->get('edit/(:num)', 'KelasControllers::edit/$1');
+    $routes->post('update/(:num)', 'KelasControllers::update/$1');
+    $routes->post('hapus/(:num)', 'KelasControllers::delete/$1');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| USER (CRUD) - AUTH
+|--------------------------------------------------------------------------
+*/
+$routes->group('user', ['filter' => 'auth'], function ($routes) {
+    $routes->get('/', 'UserControllers::DaftarUser');
+    $routes->get('tambah', 'UserControllers::TambahUser');
+    $routes->post('simpan', 'UserControllers::SimpanUser');
+    $routes->get('edit/(:num)', 'UserControllers::EditUser/$1');
+    $routes->post('update/(:num)', 'UserControllers::UpdateUser/$1');
+    $routes->post('hapus/(:num)', 'UserControllers::HapusUser/$1');
+});
