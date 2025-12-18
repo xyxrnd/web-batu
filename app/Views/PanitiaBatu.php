@@ -45,7 +45,10 @@
                                     <td><?= esc($row['jenis_batu']) ?></td>
                                     <td><?= esc($row['kelas']) ?></td>
                                     <td class="text-center">
-
+                                        <a href="/ahp/hasil/<?= $row['id_batu'] ?>"
+                                            class="btn btn-info btn-sm">
+                                            <i class="fa fa-balance-scale"></i> Hasil Bobot
+                                        </a>
                                         <a href="/batu/edit/<?= $row['id_batu'] ?>"
                                             class="btn btn-warning btn-sm">
                                             <i class="fa fa-edit"></i> Edit

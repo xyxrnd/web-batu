@@ -79,11 +79,38 @@ $routes->group('kelas', ['filter' => 'auth'], function ($routes) {
 | USER (CRUD) - AUTH
 |--------------------------------------------------------------------------
 */
-$routes->group('user', ['filter' => 'auth'], function ($routes) {
+// $routes->group('user', ['filter' => 'auth'], function ($routes) {
+//     $routes->get('/', 'UserControllers::DaftarUser');
+//     $routes->get('tambah', 'UserControllers::TambahUser');
+//     $routes->post('simpan', 'UserControllers::SimpanUser');
+//     $routes->get('edit/(:num)', 'UserControllers::EditUser/$1');
+//     $routes->post('update/(:num)', 'UserControllers::UpdateUser/$1');
+//     $routes->post('hapus/(:num)', 'UserControllers::HapusUser/$1');
+// });
+$routes->group('user', function ($routes) {
     $routes->get('/', 'UserControllers::DaftarUser');
     $routes->get('tambah', 'UserControllers::TambahUser');
     $routes->post('simpan', 'UserControllers::SimpanUser');
     $routes->get('edit/(:num)', 'UserControllers::EditUser/$1');
     $routes->post('update/(:num)', 'UserControllers::UpdateUser/$1');
     $routes->post('hapus/(:num)', 'UserControllers::HapusUser/$1');
+});
+
+
+$routes->group('ahp', ['filter' => 'auth'], function ($routes) {
+
+    // =========================
+    // FORM INPUT BOBOT
+    // =========================
+    $routes->get('/', 'AhpControllers::tambahBobot');
+
+    // =========================
+    // SIMPAN INPUT USER
+    // =========================
+    $routes->post('simpan', 'AhpControllers::simpanBobot');
+
+    // =========================
+    // LIHAT HASIL BOBOT (GROUP AHP)
+    // =========================
+    $routes->get('hasil/(:num)', 'AhpControllers::hasilBobot/$1');
 });

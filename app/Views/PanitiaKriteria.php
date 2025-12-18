@@ -16,7 +16,7 @@
         <a href="/kriteria/tambah" class="btn btn-sm btn-primary shadow-sm">
             <i class="fas fa-plus fa-sm text-white-500"></i> Tambah
         </a>
-        <a href="/kriteria/bobot"
+        <a href="/ahp"
             class="btn btn-info btn-sm">
             <i class="fa fa-balance-scale"></i> Kelola Bobot
         </a>
