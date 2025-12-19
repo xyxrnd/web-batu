@@ -114,3 +114,10 @@ $routes->group('ahp', ['filter' => 'auth'], function ($routes) {
     // =========================
     $routes->get('hasil/(:num)', 'AhpControllers::hasilBobot/$1');
 });
+
+$routes->get('/pendaftaran', 'PendaftaranControllers::index');
+$routes->get('/pendaftaran/create', 'PendaftaranControllers::create');
+$routes->post('/pendaftaran/store', 'PendaftaranControllers::store');
+$routes->get('/pendaftaran/edit/(:num)', 'PendaftaranControllers::edit/$1');
+$routes->post('/pendaftaran/update/(:num)', 'PendaftaranControllers::update/$1');
+$routes->get('/pendaftaran/delete/(:num)', 'PendaftaranControllers::delete/$1');

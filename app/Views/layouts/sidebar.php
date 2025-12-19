@@ -57,9 +57,9 @@
             <span>Kelola User</span></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="<?= base_url('admin/transaksi/HTransaksi') ?>">
+        <a class="nav-link" href="/pendaftaran">
             <i class="fas fa-fw fa-chart-area"></i>
-            <span>Histori Transaksi</span></a>
+            <span>Kelola Pendaftaran</span></a>
     </li>
     <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
