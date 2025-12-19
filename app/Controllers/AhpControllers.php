@@ -34,48 +34,48 @@ class AhpControllers extends BaseController
     // =====================================
     // SIMPAN INPUT USER (RAW DATA)
     // =====================================
-    public function simpanBobot()
-    {
-        $id_user = session()->get('id_user');
-        $id_batu = $this->request->getPost('id_batu');
-        $pairs   = $this->request->getPost('pair');
+    // public function simpanBobot()
+    // {
+    //     $id_user = session()->get('id_user');
+    //     $id_batu = $this->request->getPost('id_batu');
+    //     $pairs   = $this->request->getPost('pair');
 
-        if (!$pairs || !$id_batu) {
-            return redirect()->back()
-                ->with('error', 'Data tidak lengkap');
-        }
+    //     if (!$pairs || !$id_batu) {
+    //         return redirect()->back()
+    //             ->with('error', 'Data tidak lengkap');
+    //     }
 
-        // Cegah input ganda
-        $cek = $this->ahp
-            ->where('id_user', $id_user)
-            ->where('id_batu', $id_batu)
-            ->first();
+    //     // Cegah input ganda
+    //     $cek = $this->ahp
+    //         ->where('id_user', $id_user)
+    //         ->where('id_batu', $id_batu)
+    //         ->first();
 
-        if ($cek) {
-            return redirect()->back()
-                ->with('error', 'Anda sudah mengisi penilaian untuk batu ini');
-        }
+    //     if ($cek) {
+    //         return redirect()->back()
+    //             ->with('error', 'Anda sudah mengisi penilaian untuk batu ini');
+    //     }
 
-        // Simpan semua pairwise user
-        foreach ($pairs as $i => $row) {
-            foreach ($row as $j => $nilai) {
-                $this->ahp->insert([
-                    'id_user'        => $id_user,
-                    'id_batu'        => $id_batu,
-                    'id_kriteria_1'  => $i,
-                    'id_kriteria_2'  => $j,
-                    'nilai'          => $nilai
-                ]);
-            }
-        }
+    //     // Simpan semua pairwise user
+    //     foreach ($pairs as $i => $row) {
+    //         foreach ($row as $j => $nilai) {
+    //             $this->ahp->insert([
+    //                 'id_user'        => $id_user,
+    //                 'id_batu'        => $id_batu,
+    //                 'id_kriteria_1'  => $i,
+    //                 'id_kriteria_2'  => $j,
+    //                 'nilai'          => $nilai
+    //             ]);
+    //         }
+    //     }
 
-        return redirect()->to('/kriteria')
-            ->with('success', 'Penilaian berhasil disimpan');
-    }
+    //     return redirect()->to('/kriteria')
+    //         ->with('success', 'Penilaian berhasil disimpan');
+    // }
 
-    // =====================================
-    // HITUNG GROUP AHP & TAMPILKAN HASIL
-    // =====================================
+    // // =====================================
+    // // HITUNG GROUP AHP & TAMPILKAN HASIL
+    // // =====================================
     public function hasilBobot($id_batu)
     {
         // Ambil ID kriteria yang BENAR-BENAR digunakan
@@ -177,5 +177,154 @@ class AhpControllers extends BaseController
             'hasil' => $hasil,
             'batu'  => $this->batu->find($id_batu)
         ]);
+    }
+
+    public function simpanBobot()
+    {
+        $id_user = session()->get('id_user');
+        $id_batu = $this->request->getPost('id_batu');
+        $pairs   = $this->request->getPost('pair');
+
+        if (!$pairs || !$id_batu) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Data tidak lengkap');
+        }
+
+        // ===============================
+        // CEGAH INPUT GANDA
+        // ===============================
+        $cek = $this->ahp
+            ->where('id_user', $id_user)
+            ->where('id_batu', $id_batu)
+            ->first();
+
+        if ($cek) {
+            return redirect()->back()
+                ->with('error', 'Anda sudah mengisi penilaian');
+        }
+
+        // ===============================
+        // 1. AMBIL ID KRITERIA
+        // ===============================
+        $ids = [];
+        foreach ($pairs as $i => $row) {
+            $ids[] = $i;
+            foreach ($row as $j => $v) {
+                $ids[] = $j;
+            }
+        }
+        $ids = array_unique($ids);
+        sort($ids);
+        $n = count($ids);
+
+        if ($n < 2) {
+            return redirect()->back()
+                ->with('error', 'Minimal 2 kriteria');
+        }
+
+        // ===============================
+        // 2. BANGUN MATRIX AHP
+        // ===============================
+        $matrix = [];
+
+        foreach ($ids as $i) {
+            foreach ($ids as $j) {
+                $matrix[$i][$j] = ($i == $j) ? 1 : 0;
+            }
+        }
+
+        foreach ($pairs as $i => $row) {
+            foreach ($row as $j => $nilai) {
+                $matrix[$i][$j] = $nilai;
+                $matrix[$j][$i] = 1 / $nilai;
+            }
+        }
+
+        // ===============================
+        // 3. NORMALISASI
+        // ===============================
+        $colSum = [];
+        foreach ($ids as $j) {
+            $colSum[$j] = array_sum(array_column($matrix, $j));
+        }
+
+        $norm = [];
+        foreach ($ids as $i) {
+            foreach ($ids as $j) {
+                $norm[$i][$j] = $matrix[$i][$j] / $colSum[$j];
+            }
+        }
+
+        // ===============================
+        // 4. VEKTOR PRIORITAS
+        // ===============================
+        $bobot = [];
+        foreach ($ids as $i) {
+            $bobot[$i] = array_sum($norm[$i]) / $n;
+        }
+
+        // ===============================
+        // 5. HITUNG λ MAX
+        // ===============================
+        $lambda = 0;
+        foreach ($ids as $i) {
+            $sum = 0;
+            foreach ($ids as $j) {
+                $sum += $matrix[$i][$j] * $bobot[$j];
+            }
+            $lambda += $sum / $bobot[$i];
+        }
+        $lambda /= $n;
+
+        // ===============================
+        // 6. CI & CR (SAATY)
+        // ===============================
+        $CI = ($lambda - $n) / ($n - 1);
+
+        $RI = [
+            1 => 0.00,
+            2 => 0.00,
+            3 => 0.58,
+            4 => 0.90,
+            5 => 1.12,
+            6 => 1.24,
+            7 => 1.32,
+            8 => 1.41,
+            9 => 1.45
+        ];
+
+        $CR = ($RI[$n] == 0) ? 0 : $CI / $RI[$n];
+
+        // ===============================
+        // ❌ JIKA TIDAK KONSISTEN
+        // ===============================
+        if ($CR > 0.1) {
+            return redirect()->back()
+                ->withInput()
+                ->with(
+                    'error',
+                    'Penilaian tidak konsisten (CR = ' . round($CR, 3) .
+                        '). Silakan perbaiki bobot.'
+                );
+        }
+
+        // ===============================
+        // ✅ SIMPAN KE DATABASE
+        // ===============================
+        foreach ($pairs as $i => $row) {
+            foreach ($row as $j => $nilai) {
+                $this->ahp->insert([
+                    'id_user'       => $id_user,
+                    'id_batu'       => $id_batu,
+                    'id_kriteria_1' => $i,
+                    'id_kriteria_2' => $j,
+                    'nilai'         => $nilai
+                ]);
+            }
+        }
+
+        return redirect()->to('/kriteria')
+            ->with('success', 'Penilaian berhasil disimpan (CR = ' . round($CR, 3) . ')');
     }
 }
