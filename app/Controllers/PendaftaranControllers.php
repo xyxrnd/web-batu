@@ -95,4 +95,17 @@ class PendaftaranControllers extends BaseController
         $this->pendaftaran->delete($id);
         return redirect()->to('/pendaftaran')->with('success', 'Data berhasil dihapus');
     }
+
+
+    public function detail($id_user)
+    {
+        $user = $this->pendaftaran->getNamaUser($id_user);
+
+        $data = [
+            'nama' => $user->nama,
+            'pendaftaran' => $this->pendaftaran->getDetail($id_user)
+        ];
+
+        return view('DetailPendaftaran', $data);
+    }
 }

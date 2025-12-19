@@ -43,16 +43,16 @@
                             <tr>
                                 <td><?= $no++ ?></td>
                                 <td><?= esc($row['nama']) ?></td>
-                                <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
+                                <td><?= date('d-m-Y', strtotime($row['tanggal'])) ?></td>
                                 <td>Rp <?= number_format($row['total_bayar'], 0, ',', '.') ?></td>
                                 <td><?= esc($row['status_pembayaran']) ?></td>
                                 <td class="text-center">
-                                    <a href="/pendaftaran/detail/<?= $row['id_pendaftaran'] ?>"
-                                        class="btn btn-info btn-sm">
+                                    <a href="/pendaftaran/detail/<?= $row['id_user'] ?>" class="btn btn-info btn-sm">
                                         <i class="fa fa-eye"></i> Detail
                                     </a>
 
-                                    <a href="/pendaftaran/keuangan/<?= $row['id_pendaftaran'] ?>"
+
+                                    <a href="/pendaftaran/keuangan/<?= $row['id_user'] ?>"
                                         class="btn btn-success btn-sm">
                                         <i class="fa fa-money-bill"></i> Keuangan
                                     </a>

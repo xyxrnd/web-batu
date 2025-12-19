@@ -89,6 +89,80 @@ class AuthControllers extends BaseController
     }
 
     // =====================
+    // FORM REGISTER
+    // =====================
+    public function Register()
+    {
+        // Jika sudah login, tidak boleh register
+        if (session()->get('isLogin')) {
+            return redirect()->to('/');
+        }
+
+        return view('register');
+    }
+
+    // =====================
+    // PROSES REGISTER
+    // =====================
+    public function ProsesRegister()
+    {
+        $rules = [
+            'nama' => [
+                'rules'  => 'required|is_unique[t_user.nama]',
+                'errors' => [
+                    'required'  => 'Nama wajib diisi',
+                    'is_unique' => 'Nama sudah digunakan'
+                ]
+            ],
+            'no_hp' => [
+                'rules'  => 'required|numeric|min_length[10]|max_length[13]|is_unique[t_user.no_hp]',
+                'errors' => [
+                    'required'   => 'No HP wajib diisi',
+                    'numeric'    => 'No HP harus angka',
+                    'min_length' => 'No HP minimal 10 digit',
+                    'max_length' => 'No HP maksimal 13 digit',
+                    'is_unique'  => 'No HP sudah terdaftar'
+                ]
+            ],
+            'password' => [
+                'rules'  => 'required|min_length[6]',
+                'errors' => [
+                    'required'   => 'Password wajib diisi',
+                    'min_length' => 'Password minimal 6 karakter'
+                ]
+            ],
+            'password_confirm' => [
+                'rules'  => 'required|matches[password]',
+                'errors' => [
+                    'required' => 'Konfirmasi password wajib diisi',
+                    'matches'  => 'Password tidak sama'
+                ]
+            ]
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
+
+        $this->user->insert([
+            'nama'     => $this->request->getPost('nama'),
+            'no_hp'    => $this->request->getPost('no_hp'),
+            'password' => password_hash(
+                $this->request->getPost('password'),
+                PASSWORD_DEFAULT
+            ),
+            'role'     => 'peserta'
+        ]);
+
+        return redirect()->to('/login')
+            ->with('success', 'Registrasi berhasil, silakan login');
+    }
+
+
+
+    // =====================
     // LOGOUT
     // =====================
     public function Logout()

@@ -21,7 +21,7 @@
                 <div class="form-group">
                     <label>Nama Pendaftar</label>
                     <input type="text" class="form-control"
-                        value="<?= esc(session()->get('nama_user')) ?>" readonly>
+                        value="<?= esc(session()->get('nama')) ?>" readonly>
                 </div>
 
                 <!-- PILIH BATU -->
@@ -52,13 +52,13 @@
 
                 <div id="previewBatu"></div>
 
-                <!-- CATATAN -->
+                <!-- CATATAN
                 <div class="form-group mt-3">
                     <label>Catatan</label>
                     <textarea name="catatan"
                         class="form-control"
                         placeholder="Catatan (opsional)"></textarea>
-                </div>
+                </div> -->
 
             </div>
 

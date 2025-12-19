@@ -77,6 +77,8 @@ class Filters extends BaseFilters
                 'except' => [
                     'login',
                     'login/*',
+                    'register',
+                    'register/*',
                     'logout'
                 ]
             ]

@@ -14,6 +14,9 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/login', 'AuthControllers::Login');
 $routes->post('/login', 'AuthControllers::ProsesLogin');
 $routes->get('/logout', 'AuthControllers::Logout');
+$routes->get('/register', 'AuthControllers::Register');
+$routes->post('/register/simpan', 'AuthControllers::ProsesRegister');
+
 
 
 /*
@@ -121,3 +124,4 @@ $routes->post('/pendaftaran/store', 'PendaftaranControllers::store');
 $routes->get('/pendaftaran/edit/(:num)', 'PendaftaranControllers::edit/$1');
 $routes->post('/pendaftaran/update/(:num)', 'PendaftaranControllers::update/$1');
 $routes->get('/pendaftaran/delete/(:num)', 'PendaftaranControllers::delete/$1');
+$routes->get('/pendaftaran/detail/(:num)', 'PendaftaranControllers::detail/$1');

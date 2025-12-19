@@ -47,6 +47,12 @@
                                 Login
                             </button>
                         </form>
+                        <hr>
+                        <div class="text-center">
+                            <a href="/register">
+                                Belum punya akun? Register
+                            </a>
+                        </div>
 
                     </div>
                 </div>
