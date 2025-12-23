@@ -6,18 +6,21 @@ use App\Controllers\BaseController;
 use App\Models\KriteriaModels;
 use App\Models\BatuModels;
 use App\Models\AhpInputModels;
+use App\Models\BatuKriteriaModel;
 
 class AhpControllers extends BaseController
 {
     protected $kriteria;
     protected $batu;
     protected $ahp;
+    protected $batukriteria;
 
     public function __construct()
     {
         $this->kriteria = new KriteriaModels();
         $this->batu     = new BatuModels();
         $this->ahp      = new AhpInputModels();
+        $this->batukriteria      = new BatuKriteriaModel();
     }
 
     // =====================================
@@ -184,6 +187,8 @@ class AhpControllers extends BaseController
         $id_user = session()->get('id_user');
         $id_batu = $this->request->getPost('id_batu');
         $pairs   = $this->request->getPost('pair');
+        $kriteria = $this->request->getPost('kriteria'); // ini array dari id_kriteria
+
 
         if (!$pairs || !$id_batu) {
             return redirect()->back()
@@ -323,6 +328,14 @@ class AhpControllers extends BaseController
                 ]);
             }
         }
+
+        foreach ($kriteria as $id_k) {
+            $this->batukriteria->insert([
+                'id_batu'     => $id_batu,
+                'id_kriteria' => $id_k
+            ]);
+        }
+
 
         return redirect()->to('/kriteria')
             ->with('success', 'Penilaian berhasil disimpan (CR = ' . round($CR, 3) . ')');

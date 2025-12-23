@@ -33,15 +33,40 @@ class SubKriteriaController extends BaseController
             throw new \CodeIgniter\Exceptions\PageNotFoundException('Data batu tidak ditemukan');
         }
 
+        $kriteria = $this->kriteria->getByBatuKriteria($id_batu);
+
+        foreach ($kriteria as &$k) {
+            $k['sub_kriteria'] = $this->subKriteria
+                ->getByBatuAndKriteria($id_batu, $k['id_kriteria']);
+        }
+
         $data = [
-            'title'        => 'Sub Kriteria',
-            'batu'         => $batu,
-            'sub_kriteria' => $this->subKriteria->getByBatuGrouped($id_batu),
-            'kriteria'     => $this->kriteria->findAll()
+            'title'    => 'Kelola Sub Kriteria',
+            'batu'     => $batu,
+            'kriteria' => $kriteria
         ];
 
         return view('PanitiaSubKriteria', $data);
     }
+
+
+    // public function index($id_batu)
+    // {
+    //     $batu = $this->batu->find($id_batu);
+
+    //     if (! $batu) {
+    //         throw new \CodeIgniter\Exceptions\PageNotFoundException('Data batu tidak ditemukan');
+    //     }
+
+    //     $data = [
+    //         'title'        => 'Sub Kriteria',
+    //         'batu'         => $batu,
+    //         'sub_kriteria' => $this->subKriteria->getByBatuGrouped($id_batu),
+    //         'kriteria'     => $this->kriteria->findAll()
+    //     ];
+
+    //     return view('PanitiaSubKriteria', $data);
+    // }
 
     /**
      * =====================

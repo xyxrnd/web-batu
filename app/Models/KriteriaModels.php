@@ -12,4 +12,13 @@ class KriteriaModels extends Model
     protected $returnType       = 'array';
 
     protected $allowedFields    = ['kriteria', 'bobot'];
+
+    public function getByBatuKriteria($id_batu)
+    {
+        return $this->select('t_kriteria.id_kriteria, t_kriteria.kriteria')
+            ->join('t_batu_kriteria', 't_batu_kriteria.id_kriteria = t_kriteria.id_kriteria')
+            ->where('t_batu_kriteria.id_batu', $id_batu)
+            ->orderBy('t_kriteria.id_kriteria', 'ASC')
+            ->findAll();
+    }
 }

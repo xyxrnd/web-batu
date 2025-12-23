@@ -93,25 +93,44 @@ class SubKriteriaModel extends Model
      * Ambil sub kriteria per BATU (GROUP BY KRITERIA)
      * --> untuk halaman kelola sub kriteria
      */
-    public function getByBatuGrouped($id_batu)
+    public function getByBatuAndKriteria($id_batu, $id_kriteria)
     {
-        $data = $this->select('
-                t_sub_kriteria.*,
-                t_kriteria.kriteria
-            ')
-            ->join('t_kriteria', 't_kriteria.id_kriteria = t_sub_kriteria.id_kriteria')
-            ->where('t_sub_kriteria.id_batu', $id_batu)
-            ->orderBy('t_sub_kriteria.id_kriteria', 'ASC')
-            ->orderBy('t_sub_kriteria.id_sub_kriteria', 'ASC')
+        return $this->where([
+            'id_batu'     => $id_batu,
+            'id_kriteria' => $id_kriteria
+        ])
+            ->orderBy('id_sub_kriteria', 'ASC')
             ->findAll();
-
-        $grouped = [];
-        foreach ($data as $row) {
-            $grouped[$row['id_kriteria']][] = $row;
-        }
-
-        return $grouped;
     }
+
+
+    // public function getByBatuAndKriteria($id_batu, $id_kriteria)
+    // {
+    //     return $this->where('id_batu', $id_batu)
+    //         ->where('id_kriteria', $id_kriteria)
+    //         ->orderBy('id_sub_kriteria', 'ASC')
+    //         ->findAll();
+    // }
+
+    // public function getByBatuGrouped($id_batu)
+    // {
+    //     $data = $this->select('
+    //             t_sub_kriteria.*,
+    //             t_kriteria.kriteria
+    //         ')
+    //         ->join('t_kriteria', 't_kriteria.id_kriteria = t_sub_kriteria.id_kriteria')
+    //         ->where('t_sub_kriteria.id_batu', $id_batu)
+    //         ->orderBy('t_sub_kriteria.id_kriteria', 'ASC')
+    //         ->orderBy('t_sub_kriteria.id_sub_kriteria', 'ASC')
+    //         ->findAll();
+
+    //     $grouped = [];
+    //     foreach ($data as $row) {
+    //         $grouped[$row['id_kriteria']][] = $row;
+    //     }
+
+    //     return $grouped;
+    // }
 
     /* =====================================================
      * AHP SUPPORT
