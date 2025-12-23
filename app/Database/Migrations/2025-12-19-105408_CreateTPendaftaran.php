@@ -25,33 +25,32 @@ class CreateTPendaftaran extends Migration
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'jumlah_batu' => [
+            'total_bayar' => [
                 'type'       => 'INT',
                 'constraint' => 11,
             ],
-            'total_bayar' => [
-                'type'       => 'DECIMAL',
-                'constraint' => '12,2',
-            ],
-            'catatan' => [
-                'type' => 'TEXT',
-                'null' => true,
+            'dp' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'null'       => true,
             ],
             'status_pembayaran' => [
                 'type'       => 'ENUM',
                 'constraint' => ['Belum Bayar', 'Lunas', 'DP'],
                 'default'    => 'Belum Bayar',
             ],
-            'status_pendaftaran' => [
-                'type'       => 'ENUM',
-                'constraint' => ['Diterima', 'Ditolak'],
-                'null'       => true,
+            'created_at' => [
+                'type' => 'DATETIME',
+                'null' => true,
             ],
-            'created_at DATETIME DEFAULT CURRENT_TIMESTAMP',
-            'updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
         ]);
 
         $this->forge->addKey('id_pendaftaran', true);
+
+        // Optional foreign key (aktifkan jika tabelnya sudah ada)
+        // $this->forge->addForeignKey('id_user', 't_user', 'id_user', 'CASCADE', 'CASCADE');
+        // $this->forge->addForeignKey('id_batu', 't_batu', 'id_batu', 'CASCADE', 'CASCADE');
+
         $this->forge->createTable('t_pendaftaran');
     }
 

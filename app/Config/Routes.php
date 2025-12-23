@@ -118,10 +118,37 @@ $routes->group('ahp', ['filter' => 'auth'], function ($routes) {
     $routes->get('hasil/(:num)', 'AhpControllers::hasilBobot/$1');
 });
 
-$routes->get('/pendaftaran', 'PendaftaranControllers::index');
-$routes->get('/pendaftaran/create', 'PendaftaranControllers::create');
-$routes->post('/pendaftaran/store', 'PendaftaranControllers::store');
-$routes->get('/pendaftaran/edit/(:num)', 'PendaftaranControllers::edit/$1');
-$routes->post('/pendaftaran/update/(:num)', 'PendaftaranControllers::update/$1');
-$routes->get('/pendaftaran/delete/(:num)', 'PendaftaranControllers::delete/$1');
-$routes->get('/pendaftaran/detail/(:num)', 'PendaftaranControllers::detail/$1');
+$routes->group('pendaftaran', function ($routes) {
+
+    // =========================
+    // CRUD PENDAFTARAN
+    // =========================
+    $routes->get('/', 'PendaftaranControllers::index');
+    $routes->get('create', 'PendaftaranControllers::create');
+    $routes->post('store', 'PendaftaranControllers::store');
+    $routes->get('edit/(:num)', 'PendaftaranControllers::edit/$1');
+    $routes->post('update/(:num)', 'PendaftaranControllers::update/$1');
+    $routes->get('delete/(:num)', 'PendaftaranControllers::delete/$1');
+
+    // =========================
+    // DETAIL & KEUANGAN
+    // =========================
+    $routes->get('detail/(:num)', 'PendaftaranControllers::detail/$1');
+
+    // popup keuangan (submit form)
+    $routes->post('prosesKeuangan', 'PendaftaranControllers::prosesKeuangan');
+
+    // =========================
+    // VERIFIKASI / STATUS
+    // =========================
+    // terima pendaftaran (generate nomor batu saat pengecekan)
+    $routes->get('terima/(:num)', 'PendaftaranControllers::terima/$1');
+});
+
+$routes->group('batu/(:num)/sub-kriteria', function ($routes) {
+    $routes->get('/', 'SubKriteriaController::index/$1');
+    $routes->post('simpan', 'SubKriteriaController::store/$1');
+    $routes->get('edit/(:num)', 'SubKriteriaController::edit/$1/$2');
+    $routes->post('update/(:num)', 'SubKriteriaController::update/$1/$2');
+    $routes->get('hapus/(:num)', 'SubKriteriaController::delete/$1/$2');
+});

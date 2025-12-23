@@ -11,5 +11,5 @@ class KriteriaModels extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
 
-    protected $allowedFields    = ['kriteria'];
+    protected $allowedFields    = ['kriteria', 'bobot'];
 }
