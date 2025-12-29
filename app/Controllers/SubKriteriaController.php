@@ -4,166 +4,133 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\SubKriteriaModel;
-use App\Models\KriteriaModels;
-use App\Models\BatuModels;
 
 class SubKriteriaController extends BaseController
 {
     protected $subKriteria;
-    protected $kriteria;
-    protected $batu;
 
     public function __construct()
     {
         $this->subKriteria = new SubKriteriaModel();
-        $this->kriteria    = new KriteriaModels();
-        $this->batu        = new BatuModels();
     }
 
-    /**
-     * =====================
-     * LIST SUB KRITERIA PER BATU
-     * =====================
-     */
-    public function index($id_batu)
+    /* =====================================================
+     * INDEX - LIST SUB KRITERIA
+     * ===================================================== */
+    public function index()
     {
-        $batu = $this->batu->find($id_batu);
-
-        if (! $batu) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data batu tidak ditemukan');
-        }
-
-        $kriteria = $this->kriteria->getByBatuKriteria($id_batu);
-
-        foreach ($kriteria as &$k) {
-            $k['sub_kriteria'] = $this->subKriteria
-                ->getByBatuAndKriteria($id_batu, $k['id_kriteria']);
-        }
-
         $data = [
-            'title'    => 'Kelola Sub Kriteria',
-            'batu'     => $batu,
-            'kriteria' => $kriteria
+            'sub'   => $this->subKriteria->getAll()
         ];
 
         return view('PanitiaSubKriteria', $data);
     }
 
+    public function create()
+    {
+        return view('TambahSubKriteria');
+    }
 
-    // public function index($id_batu)
-    // {
-    //     $batu = $this->batu->find($id_batu);
 
-    //     if (! $batu) {
-    //         throw new \CodeIgniter\Exceptions\PageNotFoundException('Data batu tidak ditemukan');
-    //     }
-
-    //     $data = [
-    //         'title'        => 'Sub Kriteria',
-    //         'batu'         => $batu,
-    //         'sub_kriteria' => $this->subKriteria->getByBatuGrouped($id_batu),
-    //         'kriteria'     => $this->kriteria->findAll()
-    //     ];
-
-    //     return view('PanitiaSubKriteria', $data);
-    // }
-
-    /**
-     * =====================
-     * SIMPAN DATA
-     * =====================
-     */
-    public function store($id_batu)
+    /* =====================================================
+     * STORE - SIMPAN SUB KRITERIA
+     * ===================================================== */
+    public function store()
     {
         $rules = [
-            'id_kriteria'       => 'required',
-            'nama_sub_kriteria' => 'required|min_length[3]',
-            'nilai'             => 'required|numeric',
+            'nama_sub' => 'required|min_length[2]'
         ];
 
         if (! $this->validate($rules)) {
             return redirect()->back()
                 ->withInput()
-                ->with('validation', $this->validator);
+                ->with('errors', $this->validator->getErrors());
         }
 
-        $this->subKriteria->insertSubKriteria([
-            'id_batu'           => $id_batu,
-            'id_kriteria'       => $this->request->getPost('id_kriteria'),
-            'nama_sub_kriteria' => $this->request->getPost('nama_sub_kriteria'),
-            'nilai'             => $this->request->getPost('nilai'),
+        $nama = trim($this->request->getPost('nama_sub'));
+
+        // Cegah duplikat
+        if ($this->subKriteria->existsByName($nama)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Sub kriteria sudah ada');
+        }
+
+        $this->subKriteria->insertSub([
+            'nama_sub' => $nama
         ]);
 
-        return redirect()->to("/batu/$id_batu/sub-kriteria")
+        return redirect()->to(site_url('sub-kriteria'))
             ->with('success', 'Sub kriteria berhasil ditambahkan');
     }
 
-    /**
-     * =====================
-     * FORM EDIT
-     * =====================
-     */
-    public function edit($id_batu, $id)
+    /* =====================================================
+     * EDIT - FORM EDIT
+     * ===================================================== */
+    public function edit($id)
     {
-        $sub = $this->subKriteria->getByIdAndBatu($id, $id_batu);
+        $sub = $this->subKriteria->getById($id);
 
         if (! $sub) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data tidak valid');
+            return redirect()->to(site_url('sub-kriteria'))
+                ->with('error', 'Data tidak ditemukan');
         }
 
         $data = [
-            'title'        => 'Edit Sub Kriteria',
-            'batu'         => $this->batu->find($id_batu),
-            'sub_kriteria' => $sub,
-            'kriteria'     => $this->kriteria->findAll()
+            'title' => 'Edit Sub Kriteria',
+            'sub'   => $sub
         ];
 
         return view('sub_kriteria/edit', $data);
     }
 
-    /**
-     * =====================
-     * UPDATE DATA
-     * =====================
-     */
-    public function update($id_batu, $id)
+    /* =====================================================
+     * UPDATE
+     * ===================================================== */
+    public function update($id)
     {
         $rules = [
-            'id_kriteria'       => 'required',
-            'nama_sub_kriteria' => 'required|min_length[3]',
-            'nilai'             => 'required|numeric',
+            'nama_sub' => 'required|min_length[2]'
         ];
 
         if (! $this->validate($rules)) {
-            return redirect()->back()->withInput();
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
         }
 
-        $this->subKriteria->updateSubKriteria($id, [
-            'id_kriteria'       => $this->request->getPost('id_kriteria'),
-            'nama_sub_kriteria' => $this->request->getPost('nama_sub_kriteria'),
-            'nilai'             => $this->request->getPost('nilai'),
+        $nama = trim($this->request->getPost('nama_sub'));
+
+        // Cegah duplikat (kecuali data sendiri)
+        if ($this->subKriteria->existsByName($nama, $id)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Sub kriteria sudah ada');
+        }
+
+        $this->subKriteria->updateSub($id, [
+            'nama_sub' => $nama
         ]);
 
-        return redirect()->to("/batu/$id_batu/sub-kriteria")
-            ->with('success', 'Sub kriteria berhasil diupdate');
+        return redirect()->to(site_url('sub-kriteria'))
+            ->with('success', 'Sub kriteria berhasil diperbarui');
     }
 
-    /**
-     * =====================
-     * HAPUS DATA
-     * =====================
-     */
-    public function delete($id_batu, $id)
+    /* =====================================================
+     * DELETE
+     * ===================================================== */
+    public function delete($id)
     {
-        $sub = $this->subKriteria->getByIdAndBatu($id, $id_batu);
+        $sub = $this->subKriteria->getById($id);
 
         if (! $sub) {
-            throw new \CodeIgniter\Exceptions\PageNotFoundException('Data tidak valid');
+            return redirect()->to(site_url('sub-kriteria'))
+                ->with('error', 'Data tidak ditemukan');
         }
 
-        $this->subKriteria->deleteSubKriteria($id);
+        $this->subKriteria->deleteSub($id);
 
-        return redirect()->to("/batu/$id_batu/sub-kriteria")
+        return redirect()->to(site_url('sub-kriteria'))
             ->with('success', 'Sub kriteria berhasil dihapus');
     }
 }

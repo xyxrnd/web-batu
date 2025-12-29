@@ -20,11 +20,29 @@ class DetailPendaftaranModels extends Model
 
     public function getNextNomorBatu($id_batu)
     {
-        $last = $this->where('id_batu', $id_batu)
+        // Ambil semua nomor batu yang aktif
+        $nomorTerpakai = $this->select('nomor_batu')
+            ->where('id_batu', $id_batu)
+            ->where('status_pendaftaran !=', 'Ditolak')
             ->where('nomor_batu IS NOT NULL')
-            ->orderBy('nomor_batu', 'DESC')
-            ->first();
+            ->orderBy('nomor_batu', 'ASC')
+            ->findColumn('nomor_batu');
 
-        return $last ? $last['nomor_batu'] + 1 : 1;
+        // Jika belum ada batu sama sekali
+        if (empty($nomorTerpakai)) {
+            return 1;
+        }
+
+        // Cari nomor terkecil yang hilang
+        $expected = 1;
+        foreach ($nomorTerpakai as $nomor) {
+            if ($nomor != $expected) {
+                return $expected;
+            }
+            $expected++;
+        }
+
+        // Jika tidak ada yang kosong, pakai nomor terakhir + 1
+        return $expected;
     }
 }

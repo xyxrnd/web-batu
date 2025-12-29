@@ -46,6 +46,11 @@
             <i class="fas fa-car"></i>
             <span>Kelola Kriteria</span></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/sub-kriteria">
+            <i class="fas fa-car"></i>
+            <span>Kelola Sub Kriteria</span></a>
+    </li>
     <!-- <li class="nav-item">
         <a class="nav-link" href="">
             <i class="fas fa-fw fa-chart-area"></i>

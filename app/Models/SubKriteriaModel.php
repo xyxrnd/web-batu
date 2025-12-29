@@ -6,154 +6,78 @@ use CodeIgniter\Model;
 
 class SubKriteriaModel extends Model
 {
-    protected $table      = 't_sub_kriteria';
-    protected $primaryKey = 'id_sub_kriteria';
+    protected $table            = 't_sub_kriteria';
+    protected $primaryKey       = 'id_sub';
 
-    protected $allowedFields = [
-        'id_batu',
-        'id_kriteria',
-        'nama_sub_kriteria',
-        'nilai'
+    protected $allowedFields    = [
+        'nama_sub'
     ];
 
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
+    protected $useTimestamps    = true;
+    protected $createdField    = 'created_at';
+    protected $updatedField    = 'updated_at';
 
     /* =====================================================
      * BASIC CRUD
      * ===================================================== */
 
-    public function getById($id)
+    /**
+     * Ambil semua sub kriteria
+     * (untuk dropdown)
+     */
+    public function getAll()
     {
-        return $this->where('id_sub_kriteria', $id)->first();
+        return $this->orderBy('id_sub', 'ASC')->findAll();
     }
 
     /**
-     * Validasi sub kriteria milik batu tertentu
+     * Ambil 1 sub kriteria berdasarkan ID
      */
-    public function getByIdAndBatu($id, $id_batu)
+    public function getById($id_sub)
     {
-        return $this->where([
-            'id_sub_kriteria' => $id,
-            'id_batu'         => $id_batu
-        ])->first();
+        return $this->find($id_sub);
     }
 
-    public function insertSubKriteria(array $data)
+    /**
+     * Simpan sub kriteria baru
+     */
+    public function insertSub(array $data)
     {
         return $this->insert($data);
     }
 
-    public function updateSubKriteria($id, array $data)
+    /**
+     * Update sub kriteria
+     */
+    public function updateSub($id_sub, array $data)
     {
-        return $this->update($id, $data);
+        return $this->update($id_sub, $data);
     }
 
-    public function deleteSubKriteria($id)
+    /**
+     * Hapus sub kriteria
+     */
+    public function deleteSub($id_sub)
     {
-        return $this->delete($id);
+        return $this->delete($id_sub);
     }
 
     /* =====================================================
-     * LISTING
+     * VALIDATION & UTILITIES
      * ===================================================== */
 
     /**
-     * Ambil semua sub kriteria + nama kriteria
-     * (untuk admin/global)
+     * Cek apakah nama sub kriteria sudah ada
+     * (hindari duplikat)
      */
-    public function getAllWithKriteria()
+    public function existsByName($nama_sub, $excludeId = null)
     {
-        return $this->select('
-                t_sub_kriteria.*,
-                t_kriteria.kriteria
-            ')
-            ->join('t_kriteria', 't_kriteria.id_kriteria = t_sub_kriteria.id_kriteria')
-            ->orderBy('t_sub_kriteria.id_sub_kriteria', 'ASC')
-            ->findAll();
-    }
+        $this->where('nama_sub', $nama_sub);
 
-    /**
-     * Ambil sub kriteria per BATU (flat)
-     */
-    public function getByBatu($id_batu)
-    {
-        return $this->select('
-                t_sub_kriteria.*,
-                t_kriteria.kriteria
-            ')
-            ->join('t_kriteria', 't_kriteria.id_kriteria = t_sub_kriteria.id_kriteria')
-            ->where('t_sub_kriteria.id_batu', $id_batu)
-            ->orderBy('t_sub_kriteria.id_sub_kriteria', 'ASC')
-            ->findAll();
-    }
+        if ($excludeId) {
+            $this->where('id_sub !=', $excludeId);
+        }
 
-    /**
-     * Ambil sub kriteria per BATU (GROUP BY KRITERIA)
-     * --> untuk halaman kelola sub kriteria
-     */
-    public function getByBatuAndKriteria($id_batu, $id_kriteria)
-    {
-        return $this->where([
-            'id_batu'     => $id_batu,
-            'id_kriteria' => $id_kriteria
-        ])
-            ->orderBy('id_sub_kriteria', 'ASC')
-            ->findAll();
-    }
-
-
-    // public function getByBatuAndKriteria($id_batu, $id_kriteria)
-    // {
-    //     return $this->where('id_batu', $id_batu)
-    //         ->where('id_kriteria', $id_kriteria)
-    //         ->orderBy('id_sub_kriteria', 'ASC')
-    //         ->findAll();
-    // }
-
-    // public function getByBatuGrouped($id_batu)
-    // {
-    //     $data = $this->select('
-    //             t_sub_kriteria.*,
-    //             t_kriteria.kriteria
-    //         ')
-    //         ->join('t_kriteria', 't_kriteria.id_kriteria = t_sub_kriteria.id_kriteria')
-    //         ->where('t_sub_kriteria.id_batu', $id_batu)
-    //         ->orderBy('t_sub_kriteria.id_kriteria', 'ASC')
-    //         ->orderBy('t_sub_kriteria.id_sub_kriteria', 'ASC')
-    //         ->findAll();
-
-    //     $grouped = [];
-    //     foreach ($data as $row) {
-    //         $grouped[$row['id_kriteria']][] = $row;
-    //     }
-
-    //     return $grouped;
-    // }
-
-    /* =====================================================
-     * AHP SUPPORT
-     * ===================================================== */
-
-    /**
-     * Hitung jumlah sub kriteria per BATU + KRITERIA
-     */
-    public function countByBatuAndKriteria($id_batu, $id_kriteria)
-    {
-        return $this->where([
-            'id_batu'     => $id_batu,
-            'id_kriteria' => $id_kriteria
-        ])->countAllResults();
-    }
-
-    /**
-     * Reset nilai sub kriteria sebelum hitung AHP
-     */
-    public function resetNilaiByBatu($id_batu)
-    {
-        return $this->where('id_batu', $id_batu)
-            ->set(['nilai' => null])
-            ->update();
+        return $this->countAllResults() > 0;
     }
 }

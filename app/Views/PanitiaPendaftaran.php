@@ -10,8 +10,13 @@
         </div>
     <?php endif; ?>
 
-    <h1 class="h3 mb-4 text-gray-800">Kelola Data Pendaftaran</h1>
 
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-4 text-gray-800">Kelola Data Pendaftaran</h1>
+        <a href="/pendaftaran/create" class="btn btn-sm btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-500"></i> Tambah
+        </a>
+    </div>
     <div class="card shadow">
         <div class="card-body">
             <table class="table table-bordered">
@@ -37,10 +42,11 @@
 
                             <td class="text-center">
 
-                                <a href="/pendaftaran/detail/<?= $row['id_user'] ?>"
+                                <a href="/pendaftaran/detail/<?= $row['id_pendaftaran'] ?>"
                                     class="btn btn-info btn-sm">
                                     <i class="fa fa-eye"></i> Detail
                                 </a>
+
 
                                 <button type="button"
                                     class="btn btn-success btn-sm"

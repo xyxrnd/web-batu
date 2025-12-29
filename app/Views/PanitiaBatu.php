@@ -45,16 +45,9 @@
                                     <td><?= esc($row['jenis_batu']) ?></td>
                                     <td><?= esc($row['kelas']) ?></td>
                                     <td class="text-center">
-
-                                        <a href="/batu/<?= $row['id_batu'] ?>/sub-kriteria"
-                                            class="btn btn-primary btn-sm">
-                                            <i class="fa fa-list"></i> Sub Kriteria
-                                        </a>
-
-
                                         <a href="/ahp/hasil/<?= $row['id_batu'] ?>"
                                             class="btn btn-info btn-sm">
-                                            <i class="fa fa-balance-scale"></i> Hasil Bobot
+                                            <i class="fa fa-balance-scale"></i> Lihat Kriteria
                                         </a>
 
                                         <a href="/batu/edit/<?= $row['id_batu'] ?>"

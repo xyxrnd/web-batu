@@ -127,17 +127,22 @@ class PendaftaranControllers extends BaseController
     }
 
 
-    public function detail($id_user)
+    public function detail($id_pendaftaran)
     {
-        $user = $this->pendaftaran->getNamaUser($id_user);
+        $detail = $this->pendaftaran
+            ->getDetailByPendaftaran($id_pendaftaran);
 
-        $data = [
-            'nama' => $user->nama,
-            'pendaftaran' => $this->pendaftaran->getDetail($id_user)
-        ];
+        if (empty($detail)) {
+            return redirect()->to('/pendaftaran')
+                ->with('error', 'Data tidak ditemukan');
+        }
 
-        return view('DetailPendaftaran', $data);
+        return view('DetailPendaftaran', [
+            'nama' => $detail[0]['nama_user'],
+            'pendaftaran' => $detail
+        ]);
     }
+
 
     public function terima($id_detail)
     {
@@ -161,5 +166,25 @@ class PendaftaranControllers extends BaseController
         ]);
 
         return redirect()->back()->with('success', 'Status pembayaran berhasil diperbarui');
+    }
+
+    public function tolak()
+    {
+        $idDetail = $this->request->getPost('id_detail');
+        $catatan  = $this->request->getPost('catatan');
+
+        if (!$idDetail || !$catatan) {
+            return redirect()->back()
+                ->with('error', 'Data tidak lengkap');
+        }
+
+        $this->detail->update($idDetail, [
+            'status_pendaftaran' => 'Ditolak',
+            'catatan'            => $catatan,
+            'nomor_batu'         => null // 🔥 BEBASKAN NOMOR
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Batu berhasil ditolak');
     }
 }

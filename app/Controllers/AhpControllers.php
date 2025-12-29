@@ -86,96 +86,101 @@ class AhpControllers extends BaseController
             ->where('id_batu', $id_batu)
             ->findAll();
 
-        $ids = [];
-        foreach ($data as $d) {
-            $ids[] = $d['id_kriteria_1'];
-            $ids[] = $d['id_kriteria_2'];
-        }
-        $ids = array_unique($ids);
-        sort($ids);
-
-        // Ambil data kriteria hanya yang dipakai
-        $kriteria = $this->kriteria
-            ->whereIn('id_kriteria', $ids)
-            ->findAll();
-
-        $n = count($ids);
-
-
-        // Ambil semua input AHP untuk batu tertentu
-        $data = $this->ahp
-            ->where('id_batu', $id_batu)
-            ->findAll();
-
-        if (!$data) {
-            return redirect()->back()
-                ->with('error', 'Belum ada data penilaian');
-        }
-
-        // =====================================
-        // 1. INISIALISASI MATRIX FULL (WAJIB)
-        // =====================================
-        $matrix = [];
-
-        foreach ($ids as $i) {
-            foreach ($ids as $j) {
-                $matrix[$i][$j] = 1; // default
-            }
-        }
-
-        // =====================================
-        // 2. ISI DARI GROUP AHP (GEOMETRIC MEAN)
-        // =====================================
-        $pairValues = [];
-
-        foreach ($data as $d) {
-            $pairValues[$d['id_kriteria_1']][$d['id_kriteria_2']][] = $d['nilai'];
-        }
-
-        foreach ($pairValues as $i => $rows) {
-            foreach ($rows as $j => $values) {
-                $gm = pow(array_product($values), 1 / count($values));
-                $matrix[$i][$j] = $gm;
-                $matrix[$j][$i] = 1 / $gm;
-            }
-        }
-
-
-        // =====================================
-        // 2. NORMALISASI
-        // =====================================
-        $colSum = [];
-        foreach ($ids as $j) {
-            $colSum[$j] = array_sum(array_column($matrix, $j));
-        }
-
-        $norm = [];
-        foreach ($ids as $i) {
-            foreach ($ids as $j) {
-                $norm[$i][$j] = $matrix[$i][$j] / $colSum[$j];
-            }
-        }
-
-        // =====================================
-        // 3. BOBOT PRIORITAS
-        // =====================================
-        $bobot = [];
-        foreach ($ids as $i) {
-            $bobot[$i] = array_sum($norm[$i]) / $n;
-        }
-
-        // =====================================
-        // 4. KONVERSI KE PERSENTASE
-        // =====================================
+        // Default nilai (AMAN)
         $hasil = [];
-        foreach ($kriteria as $k) {
-            $hasil[] = [
-                'kriteria' => $k['kriteria'],
-                'bobot'    => $bobot[$k['id_kriteria']],
-                'persen'   => round($bobot[$k['id_kriteria']] * 100, 2)
-            ];
-        }
+        $ids   = [];
+        if (!empty($data)) {
+            $ids = [];
+            foreach ($data as $d) {
+                $ids[] = $d['id_kriteria_1'];
+                $ids[] = $d['id_kriteria_2'];
+            }
+            $ids = array_unique($ids);
+            sort($ids);
 
+            // Ambil data kriteria hanya yang dipakai
+            $kriteria = $this->kriteria
+                ->whereIn('id_kriteria', $ids)
+                ->findAll();
+
+            $n = count($ids);
+
+
+            // Ambil semua input AHP untuk batu tertentu
+            $data = $this->ahp
+                ->where('id_batu', $id_batu)
+                ->findAll();
+
+            if (!$data) {
+                return redirect()->back()
+                    ->with('error', 'Belum ada data penilaian');
+            }
+
+            // =====================================
+            // 1. INISIALISASI MATRIX FULL (WAJIB)
+            // =====================================
+            $matrix = [];
+
+            foreach ($ids as $i) {
+                foreach ($ids as $j) {
+                    $matrix[$i][$j] = 1; // default
+                }
+            }
+
+            // =====================================
+            // 2. ISI DARI GROUP AHP (GEOMETRIC MEAN)
+            // =====================================
+            $pairValues = [];
+
+            foreach ($data as $d) {
+                $pairValues[$d['id_kriteria_1']][$d['id_kriteria_2']][] = $d['nilai'];
+            }
+
+            foreach ($pairValues as $i => $rows) {
+                foreach ($rows as $j => $values) {
+                    $gm = pow(array_product($values), 1 / count($values));
+                    $matrix[$i][$j] = $gm;
+                    $matrix[$j][$i] = 1 / $gm;
+                }
+            }
+
+
+            // =====================================
+            // 2. NORMALISASI
+            // =====================================
+            $colSum = [];
+            foreach ($ids as $j) {
+                $colSum[$j] = array_sum(array_column($matrix, $j));
+            }
+
+            $norm = [];
+            foreach ($ids as $i) {
+                foreach ($ids as $j) {
+                    $norm[$i][$j] = $matrix[$i][$j] / $colSum[$j];
+                }
+            }
+
+            // =====================================
+            // 3. BOBOT PRIORITAS
+            // =====================================
+            $bobot = [];
+            foreach ($ids as $i) {
+                $bobot[$i] = array_sum($norm[$i]) / $n;
+            }
+
+            // =====================================
+            // 4. KONVERSI KE PERSENTASE
+            // =====================================
+            $hasil = [];
+            foreach ($kriteria as $k) {
+                $hasil[] = [
+                    'id_kriteria' => $k['id_kriteria'],
+                    'kriteria'    => $k['kriteria'],
+                    'bobot'       => $bobot[$k['id_kriteria']],
+                    'persen'      => round($bobot[$k['id_kriteria']] * 100, 2)
+                ];
+            }
+        }
         return view('HasilBobot', [
             'hasil' => $hasil,
             'batu'  => $this->batu->find($id_batu)

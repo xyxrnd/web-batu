@@ -143,12 +143,34 @@ $routes->group('pendaftaran', function ($routes) {
     // =========================
     // terima pendaftaran (generate nomor batu saat pengecekan)
     $routes->get('terima/(:num)', 'PendaftaranControllers::terima/$1');
+
+    $routes->post('tolak', 'PendaftaranControllers::tolak');
 });
 
-$routes->group('batu/(:num)/sub-kriteria', function ($routes) {
-    $routes->get('/', 'SubKriteriaController::index/$1');
-    $routes->post('simpan', 'SubKriteriaController::store/$1');
-    $routes->get('edit/(:num)', 'SubKriteriaController::edit/$1/$2');
-    $routes->post('update/(:num)', 'SubKriteriaController::update/$1/$2');
-    $routes->get('hapus/(:num)', 'SubKriteriaController::delete/$1/$2');
+$routes->group('sub-kriteria', function ($routes) {
+    $routes->get('/', 'SubKriteriaController::index');
+    $routes->get('tambah', 'SubKriteriaController::create');
+    $routes->post('store', 'SubKriteriaController::store');
+    $routes->get('edit/(:num)', 'SubKriteriaController::edit/$1');
+    $routes->post('update/(:num)', 'SubKriteriaController::update/$1');
+    $routes->get('delete/(:num)', 'SubKriteriaController::delete/$1');
 });
+
+$routes->group('ahp-sub', ['filter' => 'auth'], function ($routes) {
+
+    // =========================
+    // FORM INPUT BOBOT
+    // =========================
+    $routes->get('/', 'AhpSubController::tambahBobot');
+
+    // =========================
+    // SIMPAN INPUT USER
+    // =========================
+    $routes->post('simpan', 'AhpSubController::simpanBobot');
+
+    // =========================
+    // LIHAT HASIL BOBOT (GROUP AHP)
+    // =========================
+    $routes->get('hasil/(:num)', 'AhpSubController::hasilBobot/$1');
+});
+$routes->get('ajax/kriteria-by-batu/(:num)', 'AhpSubController::kriteriaByBatu/$1');

@@ -4,29 +4,20 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateTSubKriteria extends Migration
+class CreateSubKriteria extends Migration
 {
     public function up()
     {
         $this->forge->addField([
-            'id_sub_kriteria' => [
+            'id_sub' => [
                 'type'           => 'INT',
                 'constraint'     => 11,
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
-            'id_kriteria' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => true,
-            ],
-            'nama_sub_kriteria' => [
+            'nama_sub' => [
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
-            ],
-            'nilai' => [
-                'type'       => 'DOUBLE',
-                'null'       => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -38,17 +29,7 @@ class CreateTSubKriteria extends Migration
             ],
         ]);
 
-        $this->forge->addKey('id_sub_kriteria', true);
-
-        // Foreign Key ke t_kriteria
-        $this->forge->addForeignKey(
-            'id_kriteria',
-            't_kriteria',
-            'id_kriteria',
-            'CASCADE',
-            'CASCADE'
-        );
-
+        $this->forge->addKey('id_sub', true);
         $this->forge->createTable('t_sub_kriteria');
     }
 

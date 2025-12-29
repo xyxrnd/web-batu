@@ -1,6 +1,6 @@
 <?= $this->extend('layouts/base') ?>
 
-<?= $this->section('title') ?>Hasil Bobot AHP<?= $this->endSection() ?>
+<?= $this->section('title') ?>Hasil Bobot Sub Kriteria AHP<?= $this->endSection() ?>
 
 <?= $this->section('content') ?>
 
@@ -8,15 +8,15 @@
 
     ```
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Hasil Bobot Kriteria (Group AHP)</h1>
-        <a href="/batu" class="btn btn-secondary btn-sm">
+        <h1 class="h3 text-gray-800">Hasil Bobot Sub Kriteria (Group AHP)</h1>
+        <a href="/ahp" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </div>
 
     <div class="card shadow mb-4">
         <div class="card-header bg-primary text-white">
-            <strong>Jenis Batu:</strong> <?= esc($batu['jenis_batu']) ?>
+            <strong>Kriteria :</strong> <?= esc($kriteria['kriteria']) ?>
         </div>
         <div class="card-body">
 
@@ -25,17 +25,16 @@
                     <thead class="thead-light">
                         <tr>
                             <th style="width:5%">No</th>
-                            <th>Kriteria</th>
+                            <th>Sub Kriteria</th>
                             <th style="width:20%">Bobot</th>
                             <th style="width:30%">Persentase</th>
-                            <th style="width:30%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($hasil)): ?>
                             <tr>
-                                <td colspan="5" class="text-center text-muted">
-                                    <em>kriteria belum ada</em>
+                                <td colspan="4" class="text-center text-muted">
+                                    <em>Sub kriteria belum ada</em>
                                 </td>
                             </tr>
                         <?php else: ?>
@@ -43,7 +42,7 @@
                             foreach ($hasil as $h): ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
-                                    <td><?= esc($h['kriteria']) ?></td>
+                                    <td><?= esc($h['nama_sub']) ?></td>
                                     <td><?= number_format($h['bobot'], 4) ?></td>
                                     <td>
                                         <div class="progress">
@@ -54,17 +53,11 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
-                                        <a href="/ahp-sub/hasil/<?= $h['id_kriteria'] ?>"
-                                            class="btn btn-info btn-sm">
-                                            <i class="fa fa-balance-scale"></i> Lihat Sub Kriteria
-                                        </a>
-                                    </td>
-
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
                     </tbody>
+
                 </table>
             </div>
 
