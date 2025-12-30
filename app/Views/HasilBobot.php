@@ -5,10 +5,8 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-
-    ```
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Hasil Bobot Kriteria (Group AHP)</h1>
+        <h1 class="h3 text-gray-800">Bobot Kriteria</h1>
         <a href="/batu" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
@@ -25,10 +23,9 @@
                     <thead class="thead-light">
                         <tr>
                             <th style="width:5%">No</th>
-                            <th>Kriteria</th>
-                            <th style="width:20%">Bobot</th>
-                            <th style="width:30%">Persentase</th>
-                            <th style="width:30%">Aksi</th>
+                            <th style="width:20%">Kriteria</th>
+                            <th style="width:40%">Persentase</th>
+                            <th style="width:15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,7 +41,6 @@
                                 <tr>
                                     <td><?= $no++ ?></td>
                                     <td><?= esc($h['kriteria']) ?></td>
-                                    <td><?= number_format($h['bobot'], 4) ?></td>
                                     <td>
                                         <div class="progress">
                                             <div class="progress-bar bg-success"
@@ -57,7 +53,7 @@
                                     <td>
                                         <a href="/ahp-sub/hasil/<?= $h['id_kriteria'] ?>"
                                             class="btn btn-info btn-sm">
-                                            <i class="fa fa-balance-scale"></i> Lihat Sub Kriteria
+                                            Lihat Sub Kriteria
                                         </a>
                                     </td>
 
@@ -67,17 +63,8 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="alert alert-info mt-4">
-                <strong>Catatan:</strong><br>
-                Bobot kriteria dihitung menggunakan <b>Group AHP</b> dengan pendekatan <i>geometric mean</i>
-                dari seluruh penilai. Nilai persentase menunjukkan tingkat kepentingan relatif tiap kriteria.
-            </div>
-
         </div>
     </div>
-    ```
-
 </div>
 
 <?= $this->endSection() ?>

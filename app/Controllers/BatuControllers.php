@@ -20,7 +20,7 @@ class BatuControllers extends BaseController
     // =========================
     // READ
     // =========================
-    public function DaftarBatu()
+    public function index()
     {
         $data['batu'] = $this->batu->getBatuWithKelas();
         return view('PanitiaBatu', $data);
@@ -29,7 +29,7 @@ class BatuControllers extends BaseController
     // =========================
     // CREATE (Form)
     // =========================
-    public function TambahBatu()
+    public function create()
     {
         $data['kelas'] = $this->kelas->findAll();
         return view('TambahBatu', $data);
@@ -38,7 +38,7 @@ class BatuControllers extends BaseController
     // =========================
     // CREATE (Simpan + Validasi)
     // =========================
-    public function SimpanBatu()
+    public function store()
     {
         $rules = [
             'jenis_batu' => 'required|min_length[3]',
@@ -62,45 +62,9 @@ class BatuControllers extends BaseController
     }
 
     // =========================
-    // UPDATE (Form)
-    // =========================
-    public function EditBatu($id_batu)
-    {
-        $data['batu']  = $this->batu->find($id_batu);
-        $data['kelas'] = $this->kelas->findAll();
-
-        return view('EditBatu', $data);
-    }
-
-    // =========================
-    // UPDATE (Proses + Validasi)
-    // =========================
-    public function UpdateBatu($id_batu)
-    {
-        $rules = [
-            'jenis_batu' => 'required|min_length[3]',
-            'id_kelas'   => 'required|numeric'
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
-
-        $this->batu->update($id_batu, [
-            'jenis_batu' => $this->request->getPost('jenis_batu'),
-            'id_kelas'   => $this->request->getPost('id_kelas'),
-        ]);
-
-        return redirect()->to('/batu')
-            ->with('success', 'Data batu berhasil diupdate');
-    }
-
-    // =========================
     // DELETE
     // =========================
-    public function HapusBatu($id_batu)
+    public function delete($id_batu)
     {
         $this->batu->delete($id_batu);
 

@@ -43,17 +43,10 @@
                                     <td><?= $no++ ?></td>
                                     <td><?= esc($row['kelas']) ?></td>
                                     <td class="text-center">
-
-                                        <a href="/kelas/edit/<?= $row['id_kelas'] ?>"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
-
                                         <button onclick="hapus(<?= $row['id_kelas'] ?>)"
                                             class="btn btn-danger btn-sm">
-                                            <i class="fa fa-trash"></i> Hapus
+                                            Hapus
                                         </button>
-
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

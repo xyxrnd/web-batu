@@ -34,12 +34,10 @@ $routes->get('/', 'Home::PanitiaDashboard', ['filter' => 'auth']);
 |--------------------------------------------------------------------------
 */
 $routes->group('batu', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/', 'BatuControllers::DaftarBatu');
-    $routes->get('tambah', 'BatuControllers::TambahBatu');
-    $routes->post('simpan', 'BatuControllers::SimpanBatu');
-    $routes->get('edit/(:num)', 'BatuControllers::EditBatu/$1');
-    $routes->post('update/(:num)', 'BatuControllers::UpdateBatu/$1');
-    $routes->post('hapus/(:num)', 'BatuControllers::HapusBatu/$1');
+    $routes->get('/', 'BatuControllers::index');
+    $routes->get('tambah', 'BatuControllers::create');
+    $routes->post('simpan', 'BatuControllers::store');
+    $routes->post('hapus/(:num)', 'BatuControllers::delete/$1');
 });
 
 
@@ -68,11 +66,9 @@ $routes->group('kriteria', ['filter' => 'auth'], function ($routes) {
 |--------------------------------------------------------------------------
 */
 $routes->group('kelas', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/', 'KelasControllers::DaftarKelas');
+    $routes->get('/', 'KelasControllers::index');
     $routes->get('tambah', 'KelasControllers::create');
     $routes->post('simpan', 'KelasControllers::store');
-    $routes->get('edit/(:num)', 'KelasControllers::edit/$1');
-    $routes->post('update/(:num)', 'KelasControllers::update/$1');
     $routes->post('hapus/(:num)', 'KelasControllers::delete/$1');
 });
 

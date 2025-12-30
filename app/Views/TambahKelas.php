@@ -3,21 +3,10 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-
-    <!-- Page Heading -->
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Tambah Data Kelas</h1>
-    </div>
-
     <div class="mb-3">
         <div class="row">
             <div class="col-md-6">
-                <h1 class="h3 d-inline align-middle">Data Kelas</h1>
-            </div>
-            <div class="col-md-6 text-right">
-                <a href="/kelas" class="btn btn-primary">
-                    <i class="fa fa-arrow-left fa-sm"></i> Kembali
-                </a>
+                <h1 class="h3 mb-0 text-gray-800">Tambah Data Kelas</h1>
             </div>
         </div>
     </div>
@@ -66,8 +55,11 @@
 
                     <div class="card-footer text-right">
                         <button type="button" class="btn btn-primary" id="btnSubmit">
-                            <i class="fa fa-save mr-2"></i> Simpan
+                            Simpan
                         </button>
+                        <a href="/kelas" class="btn btn-secondary">
+                            Kembali
+                        </a>
                     </div>
 
                 </form>

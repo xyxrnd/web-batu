@@ -5,11 +5,9 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-
-    ```
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 text-gray-800">Hasil Bobot Sub Kriteria (Group AHP)</h1>
-        <a href="/ahp" class="btn btn-secondary btn-sm">
+        <h1 class="h3 text-gray-800">Bobot Sub Kriteria</h1>
+        <a href="/batu" class="btn btn-secondary btn-sm">
             <i class="fa fa-arrow-left"></i> Kembali
         </a>
     </div>
@@ -25,9 +23,8 @@
                     <thead class="thead-light">
                         <tr>
                             <th style="width:5%">No</th>
-                            <th>Sub Kriteria</th>
-                            <th style="width:20%">Bobot</th>
-                            <th style="width:30%">Persentase</th>
+                            <th style="width: 15%;">Sub Kriteria</th>
+                            <th style="width:40%">Persentase</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +40,6 @@
                                 <tr>
                                     <td><?= $no++ ?></td>
                                     <td><?= esc($h['nama_sub']) ?></td>
-                                    <td><?= number_format($h['bobot'], 4) ?></td>
                                     <td>
                                         <div class="progress">
                                             <div class="progress-bar bg-success"
@@ -60,17 +56,8 @@
 
                 </table>
             </div>
-
-            <div class="alert alert-info mt-4">
-                <strong>Catatan:</strong><br>
-                Bobot kriteria dihitung menggunakan <b>Group AHP</b> dengan pendekatan <i>geometric mean</i>
-                dari seluruh penilai. Nilai persentase menunjukkan tingkat kepentingan relatif tiap kriteria.
-            </div>
-
         </div>
     </div>
-    ```
-
 </div>
 
 <?= $this->endSection() ?>

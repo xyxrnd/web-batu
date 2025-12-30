@@ -17,7 +17,7 @@ class KelasControllers extends BaseController
     // =========================
     // READ (Daftar Kelas)
     // =========================
-    public function DaftarKelas()
+    public function index()
     {
         $data['kelas'] = $this->kelas->findAll();
         return view('PanitiaKelas', $data);
@@ -52,39 +52,6 @@ class KelasControllers extends BaseController
 
         return redirect()->to('/kelas')
             ->with('success', 'Data kelas berhasil ditambahkan');
-    }
-
-    // =========================
-    // UPDATE (Form Edit)
-    // =========================
-    public function edit($id_kelas)
-    {
-        $data['kelas'] = $this->kelas->find($id_kelas);
-
-        return view('EditKelas', $data);
-    }
-
-    // =========================
-    // UPDATE (Proses + Validasi)
-    // =========================
-    public function update($id_kelas)
-    {
-        $rules = [
-            'kelas' => 'required|min_length[2]'
-        ];
-
-        if (! $this->validate($rules)) {
-            return redirect()->back()
-                ->withInput()
-                ->with('errors', $this->validator->getErrors());
-        }
-
-        $this->kelas->update($id_kelas, [
-            'kelas' => $this->request->getPost('kelas')
-        ]);
-
-        return redirect()->to('/kelas')
-            ->with('success', 'Data kelas berhasil diupdate');
     }
 
     // =========================

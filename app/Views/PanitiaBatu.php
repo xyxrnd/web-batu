@@ -47,17 +47,11 @@
                                     <td class="text-center">
                                         <a href="/ahp/hasil/<?= $row['id_batu'] ?>"
                                             class="btn btn-info btn-sm">
-                                            <i class="fa fa-balance-scale"></i> Lihat Kriteria
+                                            Lihat Kriteria
                                         </a>
-
-                                        <a href="/batu/edit/<?= $row['id_batu'] ?>"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
-
                                         <button onclick="hapus(<?= $row['id_batu'] ?>)"
                                             class="btn btn-danger btn-sm">
-                                            <i class="fa fa-trash"></i> Hapus
+                                            Hapus
                                         </button>
 
                                     </td>
