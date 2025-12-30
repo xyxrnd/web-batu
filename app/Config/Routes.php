@@ -47,12 +47,10 @@ $routes->group('batu', ['filter' => 'auth'], function ($routes) {
 |--------------------------------------------------------------------------
 */
 $routes->group('kriteria', ['filter' => 'auth'], function ($routes) {
-    $routes->get('/', 'KriteriaControllers::DaftarKriteria');
-    $routes->get('tambah', 'KriteriaControllers::TambahKriteria');
-    $routes->post('simpan', 'KriteriaControllers::SimpanKriteria');
-    $routes->get('edit/(:num)', 'KriteriaControllers::EditKriteria/$1');
-    $routes->post('update/(:num)', 'KriteriaControllers::UpdateKriteria/$1');
-    $routes->post('hapus/(:num)', 'KriteriaControllers::HapusKriteria/$1');
+    $routes->get('/', 'KriteriaControllers::index');
+    $routes->get('tambah', 'KriteriaControllers::create');
+    $routes->post('simpan', 'KriteriaControllers::store');
+    $routes->post('hapus/(:num)', 'KriteriaControllers::delete/$1');
 
     // Bobot AHP
     $routes->get('bobot', 'KriteriaControllers::bobotAHP');
