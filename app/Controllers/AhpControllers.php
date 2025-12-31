@@ -7,6 +7,7 @@ use App\Models\KriteriaModels;
 use App\Models\BatuModels;
 use App\Models\AhpInputModels;
 use App\Models\BatuKriteriaModel;
+use App\Models\BobotKriteriaModel;
 
 class AhpControllers extends BaseController
 {
@@ -14,6 +15,7 @@ class AhpControllers extends BaseController
     protected $batu;
     protected $ahp;
     protected $batukriteria;
+    protected $bobotKriteria;
 
     public function __construct()
     {
@@ -21,6 +23,7 @@ class AhpControllers extends BaseController
         $this->batu     = new BatuModels();
         $this->ahp      = new AhpInputModels();
         $this->batukriteria      = new BatuKriteriaModel();
+        $this->bobotKriteria      = new BobotKriteriaModel();
     }
 
     // =====================================
@@ -34,13 +37,12 @@ class AhpControllers extends BaseController
         ]);
     }
 
+
     public function simpanBobot()
     {
         $id_user = session()->get('id_user');
         $id_batu = $this->request->getPost('id_batu');
         $pairs   = $this->request->getPost('pair');
-        $kriteria = $this->request->getPost('kriteria'); // ini array dari id_kriteria
-
 
         if (!$pairs || !$id_batu) {
             return redirect()->back()
@@ -49,12 +51,12 @@ class AhpControllers extends BaseController
         }
 
         // ===============================
-        // CEGAH INPUT GANDA
+        // CEGAH INPUT GANDA (PER USER)
         // ===============================
         $cek = $this->ahp
             ->where('id_user', $id_user)
             ->where('id_batu', $id_batu)
-            ->first();
+            ->countAllResults();
 
         if ($cek) {
             return redirect()->back()
@@ -77,14 +79,13 @@ class AhpControllers extends BaseController
 
         if ($n < 2) {
             return redirect()->back()
-                ->with('error', 'Minimal 2 kriteria');
+                ->with('error', 'Minimal 2 Kriteria');
         }
 
         // ===============================
-        // 2. BANGUN MATRIX AHP
+        // 2. MATRIX USER (UNTUK CR)
         // ===============================
         $matrix = [];
-
         foreach ($ids as $i) {
             foreach ($ids as $j) {
                 $matrix[$i][$j] = ($i == $j) ? 1 : 0;
@@ -99,11 +100,14 @@ class AhpControllers extends BaseController
         }
 
         // ===============================
-        // 3. NORMALISASI
+        // 3. NORMALISASI & CR (USER)
         // ===============================
         $colSum = [];
         foreach ($ids as $j) {
-            $colSum[$j] = array_sum(array_column($matrix, $j));
+            $colSum[$j] = 0;
+            foreach ($ids as $i) {
+                $colSum[$j] += $matrix[$i][$j];
+            }
         }
 
         $norm = [];
@@ -113,61 +117,33 @@ class AhpControllers extends BaseController
             }
         }
 
-        // ===============================
-        // 4. VEKTOR PRIORITAS
-        // ===============================
-        $bobot = [];
+        $bobotUser = [];
         foreach ($ids as $i) {
-            $bobot[$i] = array_sum($norm[$i]) / $n;
+            $bobotUser[$i] = array_sum($norm[$i]) / $n;
         }
 
-        // ===============================
-        // 5. HITUNG λ MAX
-        // ===============================
         $lambda = 0;
         foreach ($ids as $i) {
             $sum = 0;
             foreach ($ids as $j) {
-                $sum += $matrix[$i][$j] * $bobot[$j];
+                $sum += $matrix[$i][$j] * $bobotUser[$j];
             }
-            $lambda += $sum / $bobot[$i];
+            $lambda += $sum / $bobotUser[$i];
         }
         $lambda /= $n;
 
-        // ===============================
-        // 6. CI & CR (SAATY)
-        // ===============================
         $CI = ($lambda - $n) / ($n - 1);
-
-        $RI = [
-            1 => 0.00,
-            2 => 0.00,
-            3 => 0.58,
-            4 => 0.90,
-            5 => 1.12,
-            6 => 1.24,
-            7 => 1.32,
-            8 => 1.41,
-            9 => 1.45
-        ];
-
+        $RI = [1 => 0, 2 => 0, 3 => 0.58, 4 => 0.9, 5 => 1.12, 6 => 1.24, 7 => 1.32, 8 => 1.41, 9 => 1.45];
         $CR = ($RI[$n] == 0) ? 0 : $CI / $RI[$n];
 
-        // ===============================
-        // ❌ JIKA TIDAK KONSISTEN
-        // ===============================
         if ($CR > 0.1) {
             return redirect()->back()
                 ->withInput()
-                ->with(
-                    'error',
-                    'Penilaian tidak konsisten (CR = ' . round($CR, 3) .
-                        '). Silakan perbaiki bobot.'
-                );
+                ->with('error', 'Penilaian tidak konsisten (CR = ' . round($CR, 3) . ')');
         }
 
         // ===============================
-        // ✅ SIMPAN KE DATABASE
+        // 4. SIMPAN INPUT USER
         // ===============================
         foreach ($pairs as $i => $row) {
             foreach ($row as $j => $nilai) {
@@ -181,7 +157,70 @@ class AhpControllers extends BaseController
             }
         }
 
-        foreach ($kriteria as $id_k) {
+        // ===============================
+        // 5. GROUP AHP (SEMUA USER)
+        // ===============================
+        $data = $this->ahp
+            ->where('id_batu', $id_batu)
+            ->findAll();
+
+        $matrixGroup = [];
+        foreach ($ids as $i) {
+            foreach ($ids as $j) {
+                $matrixGroup[$i][$j] = 1;
+            }
+        }
+
+        $pairValues = [];
+        foreach ($data as $d) {
+            $pairValues[$d['id_kriteria_1']][$d['id_kriteria_2']][] = $d['nilai'];
+        }
+
+        foreach ($pairValues as $i => $rows) {
+            foreach ($rows as $j => $values) {
+                $gm = pow(array_product($values), 1 / count($values));
+                $matrixGroup[$i][$j] = $gm;
+                $matrixGroup[$j][$i] = 1 / $gm;
+            }
+        }
+
+        // ===============================
+        // 6. NORMALISASI GROUP
+        // ===============================
+        $colSum = [];
+        foreach ($ids as $j) {
+            $colSum[$j] = 0;
+            foreach ($ids as $i) {
+                $colSum[$j] += $matrixGroup[$i][$j];
+            }
+        }
+
+        $bobotFinal = [];
+        foreach ($ids as $i) {
+            $sum = 0;
+            foreach ($ids as $j) {
+                $sum += $matrixGroup[$i][$j] / $colSum[$j];
+            }
+            $bobotFinal[$i] = $sum / $n;
+        }
+
+        // ===============================
+        // 7. SIMPAN HASIL AKHIR
+        // ===============================
+        $this->bobotKriteria
+            ->where('id_batu', $id_batu)
+            ->delete();
+
+        foreach ($bobotFinal as $id_kriteria => $nilai) {
+            $this->bobotKriteria->insert([
+                'id_batu'     => $id_batu,
+                'id_kriteria' => $id_kriteria,
+                'bobot'       => $nilai,
+                'persen'      => round($nilai * 100, 2),
+            ]);
+        }
+
+        foreach ($ids as $id_k) {
             $this->batukriteria->insert([
                 'id_batu'     => $id_batu,
                 'id_kriteria' => $id_k
@@ -198,109 +237,20 @@ class AhpControllers extends BaseController
     // // =====================================
     public function hasilBobot($id_batu)
     {
-        // Ambil ID kriteria yang BENAR-BENAR digunakan
-        $data = $this->ahp
-            ->where('id_batu', $id_batu)
-            ->findAll();
-
-        // Default nilai (AMAN)
-        $hasil = [];
-        $ids   = [];
-        if (!empty($data)) {
-            $ids = [];
-            foreach ($data as $d) {
-                $ids[] = $d['id_kriteria_1'];
-                $ids[] = $d['id_kriteria_2'];
-            }
-            $ids = array_unique($ids);
-            sort($ids);
-
-            // Ambil data kriteria hanya yang dipakai
-            $kriteria = $this->kriteria
-                ->whereIn('id_kriteria', $ids)
-                ->findAll();
-
-            $n = count($ids);
-
-
-            // Ambil semua input AHP untuk batu tertentu
-            $data = $this->ahp
-                ->where('id_batu', $id_batu)
-                ->findAll();
-
-            if (!$data) {
-                return redirect()->back()
-                    ->with('error', 'Belum ada data penilaian');
-            }
-
-            // =====================================
-            // 1. INISIALISASI MATRIX FULL (WAJIB)
-            // =====================================
-            $matrix = [];
-
-            foreach ($ids as $i) {
-                foreach ($ids as $j) {
-                    $matrix[$i][$j] = 1; // default
-                }
-            }
-
-            // =====================================
-            // 2. ISI DARI GROUP AHP (GEOMETRIC MEAN)
-            // =====================================
-            $pairValues = [];
-
-            foreach ($data as $d) {
-                $pairValues[$d['id_kriteria_1']][$d['id_kriteria_2']][] = $d['nilai'];
-            }
-
-            foreach ($pairValues as $i => $rows) {
-                foreach ($rows as $j => $values) {
-                    $gm = pow(array_product($values), 1 / count($values));
-                    $matrix[$i][$j] = $gm;
-                    $matrix[$j][$i] = 1 / $gm;
-                }
-            }
-
-
-            // =====================================
-            // 2. NORMALISASI
-            // =====================================
-            $colSum = [];
-            foreach ($ids as $j) {
-                $colSum[$j] = array_sum(array_column($matrix, $j));
-            }
-
-            $norm = [];
-            foreach ($ids as $i) {
-                foreach ($ids as $j) {
-                    $norm[$i][$j] = $matrix[$i][$j] / $colSum[$j];
-                }
-            }
-
-            // =====================================
-            // 3. BOBOT PRIORITAS
-            // =====================================
-            $bobot = [];
-            foreach ($ids as $i) {
-                $bobot[$i] = array_sum($norm[$i]) / $n;
-            }
-
-            // =====================================
-            // 4. KONVERSI KE PERSENTASE
-            // =====================================
-            $hasil = [];
-            foreach ($kriteria as $k) {
-                $hasil[] = [
-                    'id_kriteria' => $k['id_kriteria'],
-                    'kriteria'    => $k['kriteria'],
-                    'bobot'       => $bobot[$k['id_kriteria']],
-                    'persen'      => round($bobot[$k['id_kriteria']] * 100, 2)
-                ];
-            }
-        }
         return view('HasilBobot', [
-            'hasil' => $hasil,
-            'batu'  => $this->batu->find($id_batu)
+            'id_batu' => $id_batu,
+            'hasil'   => $this->bobotKriteria->getHasilByBatu($id_batu),
+            'batu'    => $this->batu->find($id_batu)
+        ]);
+    }
+
+    public function detailBobot($id_batu, $id_kriteria)
+    {
+        return view('DetailBobot', [
+            'detail'   => $this->ahp->getDetailBobot($id_batu, $id_kriteria),
+            'total'    => $this->ahp->getTotalNilaiKriteria($id_batu, $id_kriteria),
+            'kriteria' => $this->kriteria->find($id_kriteria),
+            'batu'     => $this->batu->find($id_batu)
         ]);
     }
 }

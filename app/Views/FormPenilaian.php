@@ -2,48 +2,82 @@
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-    <h1 class="h4 mb-4">Form Penilaian Batu</h1>
+    <h4 class="mb-4 fw-bold">
+        Penilaian Jenis Batu
+    </h4>
 
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success"><?= session()->getFlashdata('success') ?></div>
-    <?php endif ?>
+    <form action="<?= site_url('penilaian/simpan') ?>" method="post">
 
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger"><?= session()->getFlashdata('error') ?></div>
-    <?php endif ?>
+        <table class="table table-bordered table-striped text-center align-middle">
+            <thead class="table-primary">
 
-    <form action="<?= base_url('penilaian/simpan') ?>" method="post">
-        <input type="hidden" name="id_detail_pendaftaran" value="<?= $id_detail_pendaftaran ?>">
-
-        <table class="table table-bordered">
-            <thead class="table-dark">
+                <!-- HEADER BARIS 1 -->
                 <tr>
-                    <th>Sub Kriteria</th>
-                    <th width="200">Nilai (1 - 9)</th>
+                    <th rowspan="2">No</th>
+                    <th rowspan="2">Nama Peserta</th>
+                    <th rowspan="2">Nomor Urut</th>
+
+                    <?php foreach ($kriteria as $k): ?>
+                        <?php $jumlahSub = max(1, count($k['sub'])); ?>
+                        <th colspan="<?= $jumlahSub ?>">
+                            <?= esc($k['kriteria']) ?>
+                            <br>
+                            <small>(Bobot: <?= $k['persen'] ?>%)</small>
+                        </th>
+                    <?php endforeach ?>
                 </tr>
+
+                <!-- HEADER BARIS 2 -->
+                <tr>
+                    <?php foreach ($kriteria as $k): ?>
+                        <?php if (!empty($k['sub'])): ?>
+                            <?php foreach ($k['sub'] as $s): ?>
+                                <th>
+                                    <?= esc($s['nama_sub']) ?>
+                                    <br><small>(<?= $s['persen'] ?>%)</small>
+                                </th>
+                            <?php endforeach ?>
+                        <?php else: ?>
+                            <th>Belum ada sub kriteria atau belum input sub kriteria</th>
+                        <?php endif ?>
+                    <?php endforeach ?>
+                </tr>
+
+
             </thead>
+
             <tbody>
-                <?php foreach ($subs as $s): ?>
+                <?php $no = 1; ?>
+                <?php foreach ($peserta as $p): ?>
                     <tr>
-                        <td><?= esc($s['nama_sub']) ?></td>
-                        <td>
-                            <input type="hidden" name="id_sub" value="<?= $s['id_sub'] ?>">
-                            <input type="number"
-                                name="nilai"
-                                class="form-control"
-                                min="1"
-                                max="9"
-                                step="0.1"
-                                required>
-                        </td>
+                        <td><?= $no++ ?></td>
+                        <td><?= esc($p['nama']) ?></td>
+                        <td><?= esc($p['nomor_batu'] ?? '-') ?></td>
+
+                        <?php foreach ($kriteria as $k): ?>
+                            <?php if (!empty($k['sub'])): ?>
+                                <?php foreach ($k['sub'] as $s): ?>
+                                    <td>
+                                        <input type="number" class="form-control text-center" required>
+                                    </td>
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                <td>
+                                    <input type="number" class="form-control text-center" required>
+                                </td>
+                            <?php endif ?>
+                        <?php endforeach ?>
                     </tr>
                 <?php endforeach ?>
             </tbody>
         </table>
 
-        <button class="btn btn-primary">
-            <i class="fas fa-save"></i> Simpan Penilaian
-        </button>
+        <div class="text-end mt-3">
+            <button type="submit" class="btn btn-success">
+                Simpan Penilaian
+            </button>
+        </div>
+
     </form>
 </div>
 

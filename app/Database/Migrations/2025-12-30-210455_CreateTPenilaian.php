@@ -20,19 +20,29 @@ class CreateTPenilaian extends Migration
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'id_sub' => [
-                'type'       => 'INT',
-                'constraint' => 11,
-                'unsigned'   => true,
-            ],
             'id_user' => [
                 'type'       => 'INT',
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'nilai' => [
+            'id_batu' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
+            'id_kriteria' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
+            'id_sub' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => true,
+            ],
+            'nilai_input' => [
                 'type'       => 'FLOAT',
-                'constraint' => '10,4',
+                'constraint' => '5,2',
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -42,12 +52,12 @@ class CreateTPenilaian extends Migration
 
         $this->forge->addKey('id_penilaian', true);
 
-        // ❗ Penting: 1 user hanya boleh menilai 1 sub untuk 1 batu
+        // Cegah juri menilai sub kriteria yang sama dua kali
         $this->forge->addUniqueKey([
             'id_detail_pendaftaran',
-            'id_sub',
-            'id_user'
-        ], 'unique_penilaian');
+            'id_user',
+            'id_sub'
+        ]);
 
         $this->forge->createTable('t_penilaian');
     }

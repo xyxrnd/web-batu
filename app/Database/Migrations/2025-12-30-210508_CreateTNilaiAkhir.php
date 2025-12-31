@@ -20,15 +20,21 @@ class CreateTNilaiAkhir extends Migration
                 'constraint' => 11,
                 'unsigned'   => true,
             ],
-            'nilai_akhir' => [
-                'type'       => 'FLOAT',
-                'constraint' => '10,6',
-            ],
-            'rangking' => [
+            'id_batu' => [
                 'type'       => 'INT',
                 'constraint' => 11,
+                'unsigned'   => true,
             ],
-            'generated_at' => [
+            'total_nilai' => [
+                'type'       => 'FLOAT',
+                'constraint' => '10,4',
+            ],
+            'peringkat' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'null'       => true,
+            ],
+            'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,
             ],
@@ -36,11 +42,8 @@ class CreateTNilaiAkhir extends Migration
 
         $this->forge->addKey('id_nilai_akhir', true);
 
-        // ❗ 1 batu (detail pendaftaran) hanya punya 1 nilai akhir
-        $this->forge->addUniqueKey(
-            'id_detail_pendaftaran',
-            'unique_nilai_akhir'
-        );
+        // 1 peserta hanya punya 1 nilai akhir
+        $this->forge->addUniqueKey('id_detail_pendaftaran');
 
         $this->forge->createTable('t_nilai_akhir');
     }

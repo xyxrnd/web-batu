@@ -66,6 +66,11 @@
             <i class="fas fa-fw fa-chart-area"></i>
             <span>Kelola Pendaftaran</span></a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/penilaian">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Kelola Kelola Penilaian</span></a>
+    </li>
     <!-- <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
             aria-expanded="true" aria-controls="collapseTwo">

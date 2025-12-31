@@ -110,6 +110,8 @@ $routes->group('ahp', ['filter' => 'auth'], function ($routes) {
     // LIHAT HASIL BOBOT (GROUP AHP)
     // =========================
     $routes->get('hasil/(:num)', 'AhpControllers::hasilBobot/$1');
+
+    $routes->get('detail/(:num)/(:num)', 'AhpControllers::detailBobot/$1/$2');
 });
 
 $routes->group('pendaftaran', function ($routes) {
@@ -165,6 +167,19 @@ $routes->group('ahp-sub', ['filter' => 'auth'], function ($routes) {
     // =========================
     // LIHAT HASIL BOBOT (GROUP AHP)
     // =========================
-    $routes->get('hasil/(:num)', 'AhpSubController::hasilBobot/$1');
+    $routes->get(
+        'hasil/(:num)/(:num)',
+        'AhpSubController::hasilBobot/$1/$2'
+    );
+    $routes->get(
+        'detail/(:num)/(:num)',
+        'AhpSubController::detailBobot/$1/$2'
+    );
 });
 $routes->get('ajax/kriteria-by-batu/(:num)', 'AhpSubController::kriteriaByBatu/$1');
+
+
+$routes->get('penilaian', 'PenilaianController::index');
+$routes->get('penilaian/batu/(:num)', 'PenilaianController::nilaiBatu/$1');
+$routes->post('penilaian/simpan', 'PenilaianController::simpan');
+$routes->get('penilaian/upload/(:num)', 'PenilaianController::upload/$1');

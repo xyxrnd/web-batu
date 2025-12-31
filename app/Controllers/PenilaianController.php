@@ -4,53 +4,50 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\PenilaianModel;
-use App\Models\SubKriteriaModel;
+use App\Models\BobotKriteriaModel;
+use App\Models\BobotSubModel;
+use App\Models\DetailPendaftaranModels;
 
 class PenilaianController extends BaseController
 {
     protected $penilaian;
-    protected $sub;
+    protected $bobotKriteria;
+    protected $bobotSub;
+    protected $detailPendaftaran;
 
     public function __construct()
     {
-        $this->penilaian = new PenilaianModel();
-        $this->sub       = new SubKriteriaModel();
+        $this->penilaian          = new PenilaianModel();
+        $this->bobotKriteria     = new BobotKriteriaModel();
+        $this->bobotSub          = new BobotSubModel();
+        $this->detailPendaftaran = new DetailPendaftaranModels();
     }
 
-    /**
-     * FORM PENILAIAN
-     */
-    public function form($id_detail_pendaftaran)
+    public function index()
     {
-        return view('FormPenilaian', [
-            'subs' => $this->sub->findAll(),
-            'id_detail_pendaftaran' => $id_detail_pendaftaran
+        return view('PenilaianBatu', [
+            'dataPenilaian' => $this->penilaian->getIndexPenilaian()
         ]);
     }
 
-    /**
-     * SIMPAN NILAI
-     */
-    public function simpan()
+    public function nilaiBatu($id_batu)
     {
-        $data = [
-            'id_detail_pendaftaran' => $this->request->getPost('id_detail_pendaftaran'),
-            'id_sub'                => $this->request->getPost('id_sub'),
-            'id_user'               => session()->get('id_user'),
-            'nilai'                 => $this->request->getPost('nilai'),
-        ];
+        // ambil kriteria + bobot
+        $kriteria = $this->bobotKriteria->getByBatu($id_batu);
 
-        // replace jika sudah pernah menilai
-        $this->penilaian
-            ->where([
-                'id_detail_pendaftaran' => $data['id_detail_pendaftaran'],
-                'id_sub' => $data['id_sub'],
-                'id_user' => $data['id_user'],
-            ])
-            ->delete();
+        // susun sub kriteria per kriteria
+        foreach ($kriteria as &$k) {
+            $k['sub'] = $this->bobotSub->getHasilByBatuKriteria(
+                $id_batu,
+                $k['id_kriteria']
+            );
+        }
+        unset($k); // best practice PHP reference
 
-        $this->penilaian->insert($data);
-
-        return redirect()->back()->with('success', 'Nilai berhasil disimpan');
+        return view('FormPenilaian', [
+            'peserta'  => $this->detailPendaftaran->getPesertaByBatu($id_batu),
+            'kriteria' => $kriteria,
+            'id_batu'  => $id_batu
+        ]);
     }
 }

@@ -51,11 +51,17 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <a href="/ahp-sub/hasil/<?= $h['id_kriteria'] ?>"
+                                        <a href="<?= base_url('ahp-sub/hasil/' . $batu['id_batu'] . '/' . $h['id_kriteria']) ?>"
                                             class="btn btn-info btn-sm">
                                             Lihat Sub Kriteria
                                         </a>
+                                        <a href="<?= base_url(
+                                                        'ahp/detail/' . $id_batu . '/' . $h['id_kriteria']
+                                                    ) ?>" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Detail
+                                        </a>
                                     </td>
+
 
                                 </tr>
                             <?php endforeach; ?>

@@ -25,6 +25,7 @@
                             <th style="width:5%">No</th>
                             <th style="width: 15%;">Sub Kriteria</th>
                             <th style="width:40%">Persentase</th>
+                            <th style="width:10%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,6 +50,15 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <td>
+                                        <a href="<?= base_url(
+                                                        'ahp-sub/detail/' . $id_batu . '/' . $h['id_sub_kriteria']
+                                                    ) ?>" class="btn btn-info btn-sm">
+                                            <i class="fa fa-eye"></i> Detail
+                                        </a>
+                                    </td>
+
+
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
