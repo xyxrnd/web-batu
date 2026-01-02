@@ -23,4 +23,9 @@ class BatuModels extends Model
             ->join('t_kelas', 't_kelas.id_kelas = t_batu.id_kelas')
             ->findAll();
     }
+
+    public function getBatuById($id_batu)
+    {
+        return $this->where('id_batu', $id_batu)->first();
+    }
 }

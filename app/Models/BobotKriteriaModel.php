@@ -16,8 +16,25 @@ class BobotKriteriaModel extends Model
         'bobot',
         'persen'
     ];
-
     protected $useTimestamps = true;
+
+
+
+
+
+    // Form Penilaian
+    public function getKriteriaByBatu($id_batu)
+    {
+        return $this->select('
+            t_bobot_kriteria.id_kriteria,
+            t_kriteria.kriteria,
+            t_bobot_kriteria.bobot,
+            t_bobot_kriteria.persen
+        ')
+            ->join('t_kriteria', 't_kriteria.id_kriteria = t_bobot_kriteria.id_kriteria')
+            ->where('t_bobot_kriteria.id_batu', $id_batu)
+            ->findAll();
+    }
 
     // ambil hasil final
     public function getHasilByBatu($id_batu)

@@ -46,14 +46,14 @@ class DetailPendaftaranModels extends Model
         return $expected;
     }
 
-    // Untuk Penilaian
-    public function getPesertaByBatu($id_batu)
+    // Form Penilaian
+    public function getDetailByBatu($id_batu)
     {
         return $this->select('
-            t_detail_pendaftaran.id_detail_pendaftaran,
-            t_detail_pendaftaran.nomor_batu,
-            t_user.nama
-        ')
+        t_detail_pendaftaran.id_detail_pendaftaran,
+        t_detail_pendaftaran.nomor_batu,
+        t_user.nama
+    ')
             ->join(
                 't_pendaftaran',
                 't_pendaftaran.id_pendaftaran = t_detail_pendaftaran.id_pendaftaran'
@@ -62,10 +62,8 @@ class DetailPendaftaranModels extends Model
                 't_user',
                 't_user.id_user = t_pendaftaran.id_user'
             )
-            ->where([
-                't_detail_pendaftaran.id_batu' => $id_batu,
-                't_detail_pendaftaran.status_pendaftaran' => 'Diterima'
-            ])
+            ->where('t_detail_pendaftaran.id_batu', $id_batu)
+            ->where('t_detail_pendaftaran.status_pendaftaran !=', 'ditolak')
             ->orderBy('t_detail_pendaftaran.nomor_batu', 'ASC')
             ->findAll();
     }

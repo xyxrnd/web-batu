@@ -1,47 +1,93 @@
 <?= $this->extend('layouts/base') ?>
+<?= $this->section('title') ?>
+Data Penilaian
+<?= $this->endSection() ?>
+
 <?= $this->section('content') ?>
 
 <div class="container-fluid">
-    <h3 class="mb-4 fw-bold">Kelola Data Penilaian</h3>
 
-    <div class="card">
-        <div class="card-body">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-4 text-gray-800">Data Penilaian</h1>
 
-            <h6 class="text-primary mb-3">Data Penilaian</h6>
+    <?php if (!empty($dataKelas)): ?>
+        <?php $i = 1; ?>
+        <?php foreach ($dataKelas as $idKelas => $batuList): ?>
 
-            <table class="table table-bordered table-striped" id="tablePenilaian">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Jenis Batu</th>
-                        <th>Total Batu</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php $no = 1;
-                    foreach ($dataPenilaian as $row): ?>
-                        <tr>
-                            <td><?= $no++ ?></td>
-                            <td><?= esc($row['jenis_batu']) ?></td>
-                            <td><?= esc($row['total_batu']) ?></td>
-                            <td>
-                                <a href="<?= site_url('penilaian/batu/' . $row['id_batu']) ?>"
-                                    class="btn btn-sm btn-info">
-                                    Nilai
-                                </a>
-                                <a href="<?= site_url('penilaian/upload/' . $row['id_batu']) ?>"
-                                    class="btn btn-sm btn-success">
-                                    Upload
-                                </a>
-                            </td>
-                        </tr>
-                    <?php endforeach ?>
-                </tbody>
-            </table>
+            <!-- Card per Kelas -->
+            <div class="card shadow mb-4">
 
+                <!-- Card Header -->
+                <a href="#collapseKelas<?= $i ?>"
+                    class="d-block card-header py-3"
+                    data-toggle="collapse"
+                    role="button"
+                    aria-expanded="false"
+                    aria-controls="collapseKelas<?= $i ?>">
+
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        Nama Kelas : <?= esc($batuList['nama_kelas']) ?>
+                    </h6>
+                </a>
+
+                <!-- Card Body (Collapse) -->
+                <div class="collapse" id="collapseKelas<?= $i ?>">
+                    <div class="card-body">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th width="5%">No</th>
+                                        <th>Jenis Batu</th>
+                                        <th width="15%">Total Batu</th>
+                                        <th width="20%">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($batuList['batu'])): ?>
+                                        <?php $no = 1; ?>
+                                        <?php foreach ($batuList['batu'] as $batu): ?>
+                                            <tr>
+                                                <td><?= $no++ ?></td>
+                                                <td><?= esc($batu['jenis_batu']) ?></td>
+                                                <td class="text-center"><?= $batu['total_batu'] ?></td>
+                                                <td class="text-center">
+                                                    <a href="<?= base_url('penilaian/batu/' . $batu['id_batu']) ?>"
+                                                        class="btn btn-info btn-sm">
+                                                        Nilai
+                                                    </a>
+                                                    <a href="<?= base_url('penilaian/upload/' . $batu['id_batu']) ?>"
+                                                        class="btn btn-success btn-sm">
+                                                        Upload
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">
+                                                Data batu belum tersedia
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <?php $i++; ?>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div class="alert alert-warning">
+            Data penilaian belum tersedia.
         </div>
-    </div>
+    <?php endif; ?>
+
 </div>
 
 <?= $this->endSection() ?>

@@ -236,7 +236,7 @@ class AhpSubController extends BaseController
             $this->bobotSub->insert([
                 'id_batu'         => $id_batu,
                 'id_kriteria'     => $id_kriteria,
-                'id_sub_kriteria' => $id_sub,
+                'id_sub' => $id_sub,
                 'bobot'           => $nilai,
                 'persen'      => round($nilai * 100, 2),
             ]);

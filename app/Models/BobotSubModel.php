@@ -15,7 +15,7 @@ class BobotSubModel extends Model
     protected $allowedFields = [
         'id_batu',
         'id_kriteria',
-        'id_sub_kriteria',
+        'id_sub',
         'bobot',
         'persen',
     ];
@@ -23,6 +23,31 @@ class BobotSubModel extends Model
     protected $useTimestamps = true;
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
+
+
+
+
+    // Form Penilaian
+    public function getSubByKriteria($id_batu, $id_kriteria)
+    {
+        return $this->select('
+            t_bobot_sub.id_sub,
+            t_sub_kriteria.nama_sub,
+            t_bobot_sub.bobot,
+            t_bobot_sub.persen
+        ')
+            ->join(
+                't_sub_kriteria',
+                't_sub_kriteria.id_sub = t_bobot_sub.id_sub'
+            )
+            ->where([
+                't_bobot_sub.id_batu'     => $id_batu,
+                't_bobot_sub.id_kriteria' => $id_kriteria
+            ])
+            ->findAll();
+    }
+
+
 
     // ===============================
     // BASIC QUERY ONLY
@@ -52,14 +77,14 @@ class BobotSubModel extends Model
     public function getHasilByBatuKriteria($id_batu, $id_kriteria)
     {
         return $this->select('
-                t_bobot_sub.id_sub_kriteria,
+                t_bobot_sub.id_sub,
                 t_sub_kriteria.nama_sub,
                 t_bobot_sub.bobot,
                 t_bobot_sub.persen
             ')
             ->join(
                 't_sub_kriteria',
-                't_sub_kriteria.id_sub = t_bobot_sub.id_sub_kriteria'
+                't_sub_kriteria.id_sub = t_bobot_sub.id_sub'
             )
             ->where('t_bobot_sub.id_batu', $id_batu)
             ->where('t_bobot_sub.id_kriteria', $id_kriteria)
