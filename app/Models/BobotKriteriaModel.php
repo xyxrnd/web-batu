@@ -20,6 +20,10 @@ class BobotKriteriaModel extends Model
 
 
 
+    public function getBobotKriteria($idBatu)
+    {
+        return $this->where('id_batu', $idBatu)->findAll();
+    }
 
 
     // Form Penilaian

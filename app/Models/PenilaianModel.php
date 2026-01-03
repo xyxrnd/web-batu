@@ -74,6 +74,34 @@ class PenilaianModel extends Model
             ->getResultArray();
     }
 
+    // Publish Nilai Akhir
+    public function getRataNilaiSub($idBatu)
+    {
+        return $this->select('
+                id_detail_pendaftaran,
+                id_kriteria,
+                id_sub,
+                AVG(nilai_input) AS nilai_rata
+            ')
+            ->where('id_batu', $idBatu)
+            ->groupBy('id_detail_pendaftaran, id_kriteria, id_sub')
+            ->findAll();
+    }
+
+    public function getRataNilaiPerSK($idBatu)
+    {
+        return $this->db->table('t_penilaian')
+            ->select('id_detail_pendaftaran, id_sub, AVG(nilai_input) AS rata_nilai')
+            ->where('id_batu', $idBatu)
+            ->groupBy('id_detail_pendaftaran, id_sub')
+            ->get()
+            ->getResultArray();
+    }
+
+
+
+
+
 
     /**
      * ===============================

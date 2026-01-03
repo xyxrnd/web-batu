@@ -182,4 +182,4 @@ $routes->get('ajax/kriteria-by-batu/(:num)', 'AhpSubController::kriteriaByBatu/$
 $routes->get('penilaian', 'PenilaianController::index');
 $routes->get('penilaian/batu/(:num)', 'PenilaianController::nilaiBatu/$1');
 $routes->post('penilaian/simpan', 'PenilaianController::simpan');
-$routes->get('penilaian/upload/(:num)', 'PenilaianController::upload/$1');
+$routes->post('penilaian/publish', 'PenilaianController::publish');

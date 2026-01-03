@@ -18,7 +18,7 @@ class NilaiAkhirModel extends Model
         'created_at'
     ];
 
-    protected $useTimestamps = true;
+    protected $useTimestamps = false;
     protected $createdField  = 'created_at';
     protected $updatedField  = false;
 
@@ -70,5 +70,71 @@ class NilaiAkhirModel extends Model
             ->where('t_nilai_akhir.id_batu', $id_batu)
             ->orderBy('total_nilai', 'DESC')
             ->findAll();
+    }
+
+    public function publishNilai($idBatu, $dataRata, $bobotKriteria, $bobotSub)
+    {
+        // Mapping bobot
+        $mapKriteria = [];
+        foreach ($bobotKriteria as $k) {
+            $mapKriteria[$k['id_kriteria']] = (float)$k['bobot'];
+        }
+
+        $mapSub = [];
+        foreach ($bobotSub as $s) {
+            $mapSub[$s['id_sub']] = (float)$s['bobot'];
+        }
+
+        // Hitung nilai akhir
+        $rekap = [];
+
+        foreach ($dataRata as $row) {
+            $idDetail = $row['id_detail_pendaftaran'];
+
+            $bobotGlobal =
+                $mapKriteria[$row['id_kriteria']] *
+                $mapSub[$row['id_sub']];
+
+            $nilaiSub = $row['nilai_rata'] * $bobotGlobal;
+
+            if (!isset($rekap[$idDetail])) {
+                $rekap[$idDetail] = 0;
+            }
+
+            $rekap[$idDetail] += $nilaiSub;
+        }
+
+        // UPSERT (AMAN DARI DUPLICATE)
+        foreach ($rekap as $idDetail => $totalNilai) {
+
+            $existing = $this->where('id_detail_pendaftaran', $idDetail)->first();
+
+            if ($existing) {
+                $this->update($existing['id_nilai_akhir'], [
+                    'total_nilai' => round($totalNilai, 5),
+                ]);
+            } else {
+                $this->insert([
+                    'id_detail_pendaftaran' => $idDetail,
+                    'id_batu'               => $idBatu,
+                    'total_nilai'           => round($totalNilai, 5),
+                    'created_at'            => date('Y-m-d H:i:s')
+                ]);
+            }
+        }
+    }
+
+    public function hitungPeringkat($idBatu)
+    {
+        $data = $this->where('id_batu', $idBatu)
+            ->orderBy('total_nilai', 'DESC')
+            ->findAll();
+
+        $rank = 1;
+        foreach ($data as $row) {
+            $this->update($row['id_nilai_akhir'], [
+                'peringkat' => $rank++
+            ]);
+        }
     }
 }

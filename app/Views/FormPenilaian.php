@@ -5,6 +5,17 @@
     <h4 class="mb-4 fw-bold">
         Penilaian Jenis Batu <?= esc($nama_batu) ?>
     </h4>
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="alert alert-success text-center">
+            <?= esc(session()->getFlashdata('success')) ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="alert alert-danger text-center">
+            <?= esc(session()->getFlashdata('error')) ?>
+        </div>
+    <?php endif; ?>
 
 
     <!-- FORM SIMPAN NILAI -->

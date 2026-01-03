@@ -8,6 +8,8 @@ use App\Models\PenilaianModel;
 use App\Models\BobotKriteriaModel;
 use App\Models\BobotSubModel;
 use App\Models\DetailPendaftaranModels;
+use App\Models\KriteriaModels;
+use App\Models\NilaiAkhirModel;
 
 class PenilaianController extends BaseController
 {
@@ -16,6 +18,8 @@ class PenilaianController extends BaseController
     protected $bobotSub;
     protected $detailPendaftaran;
     protected $batu;
+    protected $nilaiAkhir;
+    protected $kriteria;
 
     public function __construct()
     {
@@ -24,6 +28,8 @@ class PenilaianController extends BaseController
         $this->bobotSub          = new BobotSubModel();
         $this->detailPendaftaran = new DetailPendaftaranModels();
         $this->batu              = new BatuModels();
+        $this->nilaiAkhir              = new NilaiAkhirModel();
+        $this->kriteria              = new KriteriaModels();
     }
 
     /**
@@ -163,4 +169,125 @@ class PenilaianController extends BaseController
 
         return redirect()->back()->with('success', 'Nilai berhasil disimpan');
     }
+
+
+    public function publish()
+    {
+        $idBatu = $this->request->getPost('id_batu');
+
+        if (!$idBatu) {
+            return redirect()->back()->with('error', 'ID batu tidak valid');
+        }
+
+        /* =====================================================
+     * 1. AMBIL RATA-RATA NILAI JURI PER SUB KRITERIA
+     * ===================================================== */
+        $nilaiSK = $this->penilaian->getRataNilaiPerSK($idBatu);
+        /*
+        hasil contoh:
+        [
+            id_detail_pendaftaran,
+            id_sub,
+            rata_nilai
+        ]
+    */
+
+        if (empty($nilaiSK)) {
+            return redirect()->back()->with('error', 'Belum ada penilaian juri');
+        }
+
+        /* =====================================================
+     * 2. AMBIL BOBOT GLOBAL SUB KRITERIA
+     * ===================================================== */
+        $kriteria = $this->kriteria->getKriteriaDenganSub();
+
+        $bobotGlobal = [];
+        foreach ($kriteria as $k) {
+            foreach ($k['sub'] as $s) {
+                $bobotGlobal[$s['id_sub']] =
+                    ($k['persen_kriteria'] / 100) *
+                    ($s['persen_sub'] / 100);
+            }
+        }
+
+        /* =====================================================
+     * 3. HITUNG NILAI AKHIR PER PESERTA
+     * ===================================================== */
+        $hasilAkhir = [];
+
+        foreach ($nilaiSK as $row) {
+
+            $idDetail = $row['id_detail_pendaftaran'];
+            $idSub    = $row['id_sub'];
+
+            if (!isset($bobotGlobal[$idSub])) {
+                continue;
+            }
+
+            $nilaiTerbobot = $row['rata_nilai'] * $bobotGlobal[$idSub];
+
+            $hasilAkhir[$idDetail] =
+                ($hasilAkhir[$idDetail] ?? 0) + $nilaiTerbobot;
+        }
+
+        if (empty($hasilAkhir)) {
+            return redirect()->back()->with('error', 'Gagal menghitung nilai akhir');
+        }
+
+        /* =====================================================
+     * 4. URUTKAN & TENTUKAN PERINGKAT
+     * ===================================================== */
+        arsort($hasilAkhir);
+
+        /* =====================================================
+     * 5. HAPUS HASIL LAMA (REKAP ULANG TOTAL)
+     * ===================================================== */
+        $this->nilaiAkhir
+            ->where('id_batu', $idBatu)
+            ->delete();
+
+        /* =====================================================
+     * 6. SIMPAN HASIL BARU
+     * ===================================================== */
+        $rank = 1;
+        foreach ($hasilAkhir as $idDetail => $nilai) {
+
+            $this->nilaiAkhir->insert([
+                'id_detail_pendaftaran' => $idDetail,
+                'id_batu'               => $idBatu,
+                'total_nilai'           => round($nilai, 4),
+                'peringkat'             => $rank,
+                'created_at'            => date('Y-m-d H:i:s')
+            ]);
+
+            $rank++;
+        }
+
+        return redirect()->back()
+            ->with('success', 'Nilai akhir berhasil dipublish (rekap semua juri)');
+    }
+
+
+    // public function publish()
+    // {
+    //     $idBatu = $this->request->getPost('id_batu');
+
+    //     $dataRata = $this->penilaian->getRataNilaiSub($idBatu);
+    //     if (empty($dataRata)) {
+    //         return redirect()->back()->with('error', 'Nilai belum lengkap');
+    //     }
+
+    //     $bobotKriteria = $this->bobotKriteria->getBobotKriteria($idBatu);
+    //     $bobotSub      = $this->bobotSub->getBobotSub($idBatu);
+
+    //     $this->nilaiAkhir->publishNilai(
+    //         $idBatu,
+    //         $dataRata,
+    //         $bobotKriteria,
+    //         $bobotSub
+    //     );
+
+    //     return redirect()->to(site_url('penilaian'))
+    //         ->with('success', 'Nilai akhir berhasil dipublish');
+    // }
 }

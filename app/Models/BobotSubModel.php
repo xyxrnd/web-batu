@@ -91,4 +91,8 @@ class BobotSubModel extends Model
             ->orderBy('t_bobot_sub.bobot', 'DESC')
             ->findAll();
     }
+    public function getBobotSub($idBatu)
+    {
+        return $this->where('id_batu', $idBatu)->findAll();
+    }
 }
