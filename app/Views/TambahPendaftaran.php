@@ -6,9 +6,7 @@
 
     <div class="d-flex justify-content-between mb-3">
         <h1 class="h3 text-gray-800">Tambah Pendaftaran</h1>
-        <a href="/pendaftaran" class="btn btn-primary">
-            <i class="fa fa-arrow-left"></i> Kembali
-        </a>
+
     </div>
 
     <div class="card">
@@ -66,6 +64,9 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fa fa-save"></i> Simpan
                 </button>
+                <a href="/pendaftaran" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Kembali
+                </a>
             </div>
 
         </form>

@@ -1,6 +1,7 @@
 <?= $this->extend('layouts/base') ?>
 <?= $this->section('title') ?>Kelola Pendaftaran<?= $this->endSection() ?>
 <?= $this->section('content') ?>
+<?php $role = session()->get('role'); ?>
 
 <div class="container-fluid">
 
@@ -42,22 +43,32 @@
 
                             <td class="text-center">
 
+                                <!-- DETAIL (SEMUA ROLE) -->
                                 <a href="/pendaftaran/detail/<?= $row['id_pendaftaran'] ?>"
                                     class="btn btn-info btn-sm">
                                     <i class="fa fa-eye"></i> Detail
                                 </a>
 
+                                <!-- KEUANGAN (BUKAN PESERTA) -->
+                                <?php if ($role !== 'Peserta'): ?>
+                                    <button type="button"
+                                        class="btn btn-success btn-sm"
+                                        onclick="openKeuangan(
+                                            <?= $row['id_pendaftaran'] ?>,
+                                            '<?= esc($row['nama']) ?>'
+                                        )">
+                                        <i class="fa fa-money-bill"></i> Keuangan
+                                    </button>
+                                <?php endif; ?>
 
-                                <button type="button"
-                                    class="btn btn-success btn-sm"
-                                    onclick="openKeuangan(
-                                    <?= $row['id_pendaftaran'] ?>,
-                                    '<?= esc($row['nama']) ?>'
-                                )">
-                                    <i class="fa fa-money-bill"></i> Keuangan
-                                </button>
+                                <!-- CETAK KITIR (SEMUA ROLE) -->
+                                <a href="/pendaftaran/detail/<?= $row['id_pendaftaran'] ?>"
+                                    class="btn btn-primary btn-sm">
+                                    <i class="fa fa-print"></i> Cetak Kitir
+                                </a>
 
                             </td>
+
                         </tr>
                     <?php endforeach ?>
                 </tbody>

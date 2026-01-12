@@ -57,10 +57,11 @@ Data Penilaian
                                                         class="btn btn-info btn-sm">
                                                         Nilai
                                                     </a>
-                                                    <a href="<?= base_url('penilaian/upload/' . $batu['id_batu']) ?>"
-                                                        class="btn btn-success btn-sm">
-                                                        Upload
+                                                    <a href="<?= base_url('penilaian/ranking/' . $idKelas) ?>"
+                                                        class="btn btn-primary btn-sm">
+                                                        Lihat Ranking
                                                     </a>
+
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

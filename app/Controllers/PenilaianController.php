@@ -267,27 +267,14 @@ class PenilaianController extends BaseController
             ->with('success', 'Nilai akhir berhasil dipublish (rekap semua juri)');
     }
 
+    public function ranking($idKelas)
+    {
+        $nilaiAkhirModel = new NilaiAkhirModel();
 
-    // public function publish()
-    // {
-    //     $idBatu = $this->request->getPost('id_batu');
+        $data = [
+            'ranking' => $nilaiAkhirModel->getRankingByKelas($idKelas)
+        ];
 
-    //     $dataRata = $this->penilaian->getRataNilaiSub($idBatu);
-    //     if (empty($dataRata)) {
-    //         return redirect()->back()->with('error', 'Nilai belum lengkap');
-    //     }
-
-    //     $bobotKriteria = $this->bobotKriteria->getBobotKriteria($idBatu);
-    //     $bobotSub      = $this->bobotSub->getBobotSub($idBatu);
-
-    //     $this->nilaiAkhir->publishNilai(
-    //         $idBatu,
-    //         $dataRata,
-    //         $bobotKriteria,
-    //         $bobotSub
-    //     );
-
-    //     return redirect()->to(site_url('penilaian'))
-    //         ->with('success', 'Nilai akhir berhasil dipublish');
-    // }
+        return view('LihatRanking', $data);
+    }
 }

@@ -20,9 +20,7 @@
 
     <div class="d-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 text-gray-800">Tambah Bobot Sub Kriteria (AHP)</h1>
-        <a href="/sub-kriteria" class="btn btn-secondary btn-sm">
-            <i class="fa fa-arrow-left"></i> Kembali
-        </a>
+
     </div>
 
     <div class="card shadow">
@@ -90,8 +88,11 @@
 
             <div class="card-footer text-right">
                 <button type="button" class="btn btn-primary" id="btnSubmit">
-                    <i class="fa fa-save mr-1"></i> Simpan Penilaian
+                    <i class="fa fa-save mr-1"></i> Simpan
                 </button>
+                <a href="/sub-kriteria" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left"></i> Kembali
+                </a>
             </div>
 
         </form>

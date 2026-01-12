@@ -9,19 +9,6 @@
         <h1 class="h3 mb-0 text-gray-800">Tambah Data Kriteria</h1>
     </div>
 
-    <div class="mb-3">
-        <div class="row">
-            <div class="col-md-6">
-                <h1 class="h3 d-inline align-middle">Data Kriteria</h1>
-            </div>
-            <div class="col-md-6 text-right">
-                <a href="/kriteria" class="btn btn-primary">
-                    <i class="fa fa-arrow-left fa-sm"></i> Kembali
-                </a>
-            </div>
-        </div>
-    </div>
-
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -58,10 +45,13 @@
 
                     </div>
 
-                    <div class="card-footer text-right">
+                    <div class="card-footer text-left">
                         <button type="button" class="btn btn-primary" id="btnSubmit">
                             <i class="fa fa-save mr-2"></i>Simpan
                         </button>
+                        <a href="/kriteria" class="btn btn-secondary">
+                            <i class="fa fa-arrow-left fa-sm"></i> Kembali
+                        </a>
                     </div>
 
                 </form>

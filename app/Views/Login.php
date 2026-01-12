@@ -15,7 +15,7 @@
                 <div class="card shadow-lg my-5">
                     <div class="card-body p-4">
 
-                        <h4 class="text-center mb-4">Login Sistem</h4>
+                        <h4 class="text-center mb-4">Sigertengah <br>Gemstone</h4>
 
                         <?php if (session()->getFlashdata('error')): ?>
                             <div class="alert alert-danger text-center">
@@ -50,7 +50,7 @@
                         <hr>
                         <div class="text-center">
                             <a href="/register">
-                                Belum punya akun? Register
+                                Belum punya akun? Daftar
                             </a>
                         </div>
 

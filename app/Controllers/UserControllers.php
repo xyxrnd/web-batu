@@ -17,7 +17,7 @@ class UserControllers extends BaseController
     // =========================
     // READ
     // =========================
-    public function DaftarUser()
+    public function index()
     {
         $data['users'] = $this->user->findAll();
         return view('PanitiaUser', $data);
@@ -26,7 +26,7 @@ class UserControllers extends BaseController
     // =========================
     // CREATE (Form)
     // =========================
-    public function TambahUser()
+    public function create()
     {
         return view('TambahUser');
     }
@@ -34,7 +34,7 @@ class UserControllers extends BaseController
     // =========================
     // CREATE (Simpan)
     // =========================
-    public function SimpanUser()
+    public function store()
     {
         $rules = [
             'nama'     => 'required|min_length[3]',
@@ -66,7 +66,7 @@ class UserControllers extends BaseController
     // =========================
     // UPDATE (Form)
     // =========================
-    public function EditUser($id_user)
+    public function edit($id_user)
     {
         $data['user'] = $this->user->find($id_user);
         return view('EditUser', $data);
@@ -75,7 +75,7 @@ class UserControllers extends BaseController
     // =========================
     // UPDATE (Proses)
     // =========================
-    public function UpdateUser($id_user)
+    public function update($id_user)
     {
         $rules = [
             'nama'  => 'required|min_length[3]',
@@ -111,7 +111,7 @@ class UserControllers extends BaseController
     // =========================
     // DELETE (POST ONLY)
     // =========================
-    public function HapusUser($id_user)
+    public function delete($id_user)
     {
         $this->user->delete($id_user);
 

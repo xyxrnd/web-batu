@@ -85,12 +85,12 @@ $routes->group('kelas', ['filter' => 'auth'], function ($routes) {
 //     $routes->post('hapus/(:num)', 'UserControllers::HapusUser/$1');
 // });
 $routes->group('user', function ($routes) {
-    $routes->get('/', 'UserControllers::DaftarUser');
-    $routes->get('tambah', 'UserControllers::TambahUser');
-    $routes->post('simpan', 'UserControllers::SimpanUser');
-    $routes->get('edit/(:num)', 'UserControllers::EditUser/$1');
-    $routes->post('update/(:num)', 'UserControllers::UpdateUser/$1');
-    $routes->post('hapus/(:num)', 'UserControllers::HapusUser/$1');
+    $routes->get('/', 'UserControllers::index');
+    $routes->get('tambah', 'UserControllers::create');
+    $routes->post('simpan', 'UserControllers::store');
+    $routes->get('edit/(:num)', 'UserControllers::edit/$1');
+    $routes->post('update/(:num)', 'UserControllers::update/$1');
+    $routes->post('hapus/(:num)', 'UserControllers::delete/$1');
 });
 
 
@@ -183,3 +183,4 @@ $routes->get('penilaian', 'PenilaianController::index');
 $routes->get('penilaian/batu/(:num)', 'PenilaianController::nilaiBatu/$1');
 $routes->post('penilaian/simpan', 'PenilaianController::simpan');
 $routes->post('penilaian/publish', 'PenilaianController::publish');
+$routes->get('penilaian/ranking/(:num)', 'PenilaianController::ranking/$1');

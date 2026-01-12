@@ -23,7 +23,7 @@ class PendaftaranControllers extends BaseController
 
     public function index()
     {
-        return view('PanitiaPendaftaran', [
+        return view('Pendaftaran', [
             'pendaftaran' => $this->pendaftaran->getIndex()
         ]);
     }

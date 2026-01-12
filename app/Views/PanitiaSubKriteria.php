@@ -18,14 +18,18 @@
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Kelola Sub Kriteria</h1>
-        <a href="<?= site_url('sub-kriteria/tambah') ?>" class="btn btn-sm btn-primary shadow-sm">
-            <i class="fas fa-plus fa-sm"></i> Tambah Sub Kriteria
-        </a>
-        <a href="/ahp-sub"
-            class="btn btn-info btn-sm">
-            <i class="fa fa-balance-scale"></i> Kelola Bobot
-        </a>
+
+        <div class="btn-group">
+            <a href="<?= site_url('sub-kriteria/tambah') ?>" class="btn btn-sm btn-primary shadow-sm">
+                <i class="fas fa-plus fa-sm text-white"></i> Tambah
+            </a>
+
+            <a href="<?= site_url('ahp-sub') ?>" class="btn btn-sm btn-info shadow-sm">
+                <i class="fas fa-balance-scale fa-sm text-white"></i> Tambah Bobot
+            </a>
+        </div>
     </div>
+
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -52,11 +56,6 @@
                                     <td><?= $no++ ?></td>
                                     <td><?= esc($row['nama_sub']) ?></td>
                                     <td class="text-center">
-
-                                        <a href="<?= site_url('sub-kriteria/edit/' . $row['id_sub']) ?>"
-                                            class="btn btn-warning btn-sm">
-                                            <i class="fa fa-edit"></i> Edit
-                                        </a>
 
                                         <form action="<?= site_url('sub-kriteria/delete/' . $row['id_sub']) ?>"
                                             method="post"

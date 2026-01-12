@@ -137,4 +137,34 @@ class NilaiAkhirModel extends Model
             ]);
         }
     }
+
+    public function getRankingByKelas($idKelas)
+    {
+        return $this->select('
+                t_nilai_akhir.peringkat,
+                t_nilai_akhir.total_nilai,
+                t_detail_pendaftaran.nomor_batu,
+                t_batu.jenis_batu,
+                t_user.nama
+            ')
+            ->join(
+                't_detail_pendaftaran',
+                't_detail_pendaftaran.id_detail_pendaftaran = t_nilai_akhir.id_detail_pendaftaran'
+            )
+            ->join(
+                't_pendaftaran',
+                't_pendaftaran.id_pendaftaran = t_detail_pendaftaran.id_pendaftaran'
+            )
+            ->join(
+                't_user',
+                't_user.id_user = t_pendaftaran.id_user'
+            )
+            ->join(
+                't_batu',
+                't_batu.id_batu = t_detail_pendaftaran.id_batu'
+            )
+            ->where('t_batu.id_kelas', $idKelas)
+            ->orderBy('t_nilai_akhir.peringkat', 'ASC')
+            ->findAll();
+    }
 }
