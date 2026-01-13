@@ -55,6 +55,11 @@
                                             class="btn btn-info btn-sm">
                                             Lihat Sub Kriteria
                                         </a>
+                                        <a href="<?= base_url('ahp/detail/' . $id_batu . '/' . $h['id_kriteria']) ?>"
+                                            class="btn btn-primary btn-sm">
+                                            Detail Bobot
+                                        </a>
+
 
                                     </td>
 

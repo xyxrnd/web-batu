@@ -23,8 +23,9 @@
                     <thead class="thead-light">
                         <tr>
                             <th style="width:5%">No</th>
-                            <th style="width: 15%;">Sub Kriteria</th>
-                            <th style="width:40%">Persentase</th>
+                            <th style="width:20%">Sub Kriteria</th>
+                            <th style="width:40%">Bobot</th>
+                            <th style="width:15%">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,8 +50,12 @@
                                             </div>
                                         </div>
                                     </td>
-
-
+                                    <td>
+                                        <a href="<?= base_url('ahp-sub/detail/' . $id_batu . '/' . $h['id_sub']) ?>"
+                                            class="btn btn-primary btn-sm">
+                                            Detail Bobot
+                                        </a>
+                                    </td>
 
                                 </tr>
                             <?php endforeach; ?>
